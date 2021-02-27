@@ -24,6 +24,8 @@ class User(db.Model):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    session['train_params'] = DEFAULT_TRAIN_PARAMS
+    session['cnn_params'] = DEFAULT_CNN_PARAMS
     if not session.get('uid'):
         new_user = User()
         db.session.add(new_user)
@@ -33,8 +35,6 @@ def index():
         # Each user has a unique directory
         # Dir. name is user ID
         os.mkdir(f"users/{session['uid']}")
-        session['train_params'] = DEFAULT_TRAIN_PARAMS
-        session['cnn_params'] = DEFAULT_CNN_PARAMS
 
     return render_template("index.html")
 
