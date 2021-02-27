@@ -4,7 +4,33 @@
 {% endblock %}
 
 {% block body %}
-<div class="content">
-    Index
-</div>
+<form method="POST" action="/" name="CNN_form">
+    <div class="row">
+        filters: <input type="number" name="filters">
+    </div>
+    <div class="row">
+        kernel: 
+        <input type="number" name="kernel_x">
+        <input type="number" name="kernel_y">
+    </div>
+    <div class="row">
+        strides: 
+        <input type="number" name="stride_x"> 
+        <input type="number" name="stride_y">
+    </div>
+    <div class="row">
+        padding: <input type="number" name="padding">
+    </div>
+    <div class="row">
+        pool_size: 
+        <input type="number" name="pool_x"> 
+        <input type="number" name="pool_y">
+    </div>
+    <div class="row">
+        batch_norm:<input type="number" name="batch_norm">
+    </div>
+    <input type="submit">
+</form>
+
+
 {% endblock %}
