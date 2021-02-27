@@ -3,14 +3,31 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = '\xd7\x15\xf4\x13k{\xb7b\xfe;D\n\xf3fa7\x9a\x0e\x87q\x0e\x1d\xabV'
 
 db = SQLAlchemy(app)
 
+DEFAULT_CNN_PARAMS = { }
+DEFAULT_TRAIN_PARAMS = { }
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<User {id}>'
+
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    if not session.get('uid'):
+        new_user = User()
+        db.session.add(new_user)
+        db.session.commit()
+        session['train_params'] = DEFAULT_TRAIN_PARAMS
+        session['cnn_params'] = DEFAULT_CNN_PARAMS
     return render_template("index.html")
 
 @app.route('/train', methods=['POST'])
@@ -36,6 +53,10 @@ def get_feature_maps(args):
 def train_model(args):
     print("Training...")
     print(args)
+
+
+
+
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=8080, debug=True)
