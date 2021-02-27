@@ -24,8 +24,13 @@ class User(db.Model):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    session['train_params'] = DEFAULT_TRAIN_PARAMS
-    session['cnn_params'] = DEFAULT_CNN_PARAMS
+
+    if not session.get('train_params'):
+        session['train_params'] = DEFAULT_TRAIN_PARAMS
+
+    if not session.get('cnn_params'):
+        session['cnn_params'] = DEFAULT_CNN_PARAMS
+
     if not session.get('uid'):
         new_user = User()
         db.session.add(new_user)
