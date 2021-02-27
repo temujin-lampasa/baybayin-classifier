@@ -13,5 +13,29 @@ db = SQLAlchemy(app)
 def index():
     return render_template("index.html")
 
+@app.route('/train', methods=['POST'])
+def train():
+    # Train here
+    session['train_params'] = request.form
+    train_model(session['train_params'])
+    return redirect('/')
+
+
+@app.route('/cnn', methods=['POST'])
+def cnn():
+    # run CNN here
+    session['cnn_params'] = request.form
+    get_feature_maps(session['cnn_params'])
+    return redirect('/')
+
+
+def get_feature_maps(args):
+    print("Getting feature maps...")
+    print(args)
+
+def train_model(args):
+    print("Training...")
+    print(args)
+
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=8080, debug=True)
