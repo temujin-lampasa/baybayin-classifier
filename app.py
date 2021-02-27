@@ -1,6 +1,7 @@
 from flask import Flask, render_template, url_for, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import os
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -11,6 +12,7 @@ db = SQLAlchemy(app)
 
 DEFAULT_CNN_PARAMS = { }
 DEFAULT_TRAIN_PARAMS = { }
+
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -26,9 +28,16 @@ def index():
         new_user = User()
         db.session.add(new_user)
         db.session.commit()
+        session['uid'] = new_user.id
+
+        # Each user has a unique directory
+        # Dir. name is user ID
+        os.mkdir(f"users/{session['uid']}")
         session['train_params'] = DEFAULT_TRAIN_PARAMS
         session['cnn_params'] = DEFAULT_CNN_PARAMS
+
     return render_template("index.html")
+
 
 @app.route('/train', methods=['POST'])
 def train():
@@ -53,10 +62,6 @@ def get_feature_maps(args):
 def train_model(args):
     print("Training...")
     print(args)
-
-
-
-
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=8080, debug=True)
