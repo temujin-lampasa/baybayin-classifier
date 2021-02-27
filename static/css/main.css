@@ -13,6 +13,7 @@ form {
     background-color: #f2f2f2;
     padding: 20px;
     width: 25%;
+    display: inline-block;
 }
 
 div.row {
