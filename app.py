@@ -10,8 +10,25 @@ app.config['SECRET_KEY'] = '\xd7\x15\xf4\x13k{\xb7b\xfe;D\n\xf3fa7\x9a\x0e\x87q\
 
 db = SQLAlchemy(app)
 
-DEFAULT_CNN_PARAMS = { }
-DEFAULT_TRAIN_PARAMS = { }
+DEFAULT_TRAIN_PARAMS = {
+    'directory': 1,
+    'learning_rate': 2,
+    'batch_size': 3,
+    'epochs': 4,
+    'momentum': 5,
+    'optimizer': '6',
+}
+DEFAULT_CNN_PARAMS = {
+    'filters': 1,
+    'kernel_x': 2,
+    'kernel_y': 2,
+    'stride_x': 3, 
+    'stride_y': 3,
+    'padding': 4,
+    'pool_x': 5,
+    'pool_y': 5,
+    'batch_norm': 6
+ }
 
 
 class User(db.Model):
@@ -24,7 +41,6 @@ class User(db.Model):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-
     if not session.get('train_params'):
         session['train_params'] = DEFAULT_TRAIN_PARAMS
 
@@ -39,8 +55,11 @@ def index():
 
         # Each user has a unique directory
         # Dir. name is user ID
-        os.mkdir(f"users/{session['uid']}")
-
+        if not os.path.exists('users'):
+            os.mkdir('users')
+        if not os.path.exists(f"users/{session['uid']}"):
+            os.mkdir(f"users/{session['uid']}")
+        
     return render_template("index.html")
 
 
