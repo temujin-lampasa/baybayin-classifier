@@ -1,61 +1,36 @@
 {% extends 'base.html' %}
 
 {% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/about.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
 {% endblock %}
 
 {% block body %}
-<h1>Baybayin Letter Classifier</h1>
-<h5> Hello, User {{ session.uid }}</h5>
-<form method="POST" action="/cnn" name="CNN_params">
-    CNN Parameters
-    <div class="row">
-        filters: <input type="number" name="filters" value={{session.cnn_params.filters}}>
+<div>
+    <div class="drawing-board">
+        <h2>Drawing Board</h2>
     </div>
-    <div class="row">
-        kernel: 
-        <input type="number" name="kernel_x" value={{session.cnn_params.kernel_x}}>
-        <input type="number" name="kernel_y" value={{session.cnn_params.kernel_y}}>
+    <div class="drawing-content">
+        <div class="drawing-canvas-background">
+            <div class="drawing-canvas"></div>
+        </div>
+        <div class="rows">
+            <div class="label-div">
+                <h3 class="drawing-label">Prediction: </h3>
+                <h3 class="drawing-label">Probability: </h3>
+            </div>
+            <div class="label-div">
+                <h3 class="drawing-output">A</h3>
+                <h3 class="drawing-output">0%</h3>
+            </div>
+            <div>
+                <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+                </p>
+            </div>
+        </div>
     </div>
-    <div class="row">
-        strides: 
-        <input type="number" name="stride_x" value={{session.cnn_params.stride_x}}> 
-        <input type="number" name="stride_y" value={{session.cnn_params.stride_y}}>
-    </div>
-    <div class="row">
-        padding: <input type="number" name="padding" value={{session.cnn_params.padding}}>
-    </div>
-    <div class="row">
-        pool_size: 
-        <input type="number" name="pool_x" value={{session.cnn_params.pool_x}}> 
-        <input type="number" name="pool_y" value={{session.cnn_params.pool_y}}>
-    </div>
-    <div class="row">
-        batch_norm: <input type="number" name="batch_norm" value={{session.cnn_params.batch_norm}}>
-    </div>
-    <input type="submit">
-</form>
-
-<form method="POST" action="/train" name="training_params">
-    Training Parameters
-    <div class="row">
-        directory: <input type="number" name="directory" value={{session.train_params.directory}}>
-    </div>
-    <div class="row">
-        learning_rate:  <input type="number" name="learning_rate" value={{session.train_params.learning_rate}}>
-    </div>
-    <div class="row">
-        batch_size:  <input type="number" name="batch_size" value={{session.train_params.batch_size}}>
-    </div>
-    <div class="row">
-        epochs: <input type="number" name="epochs" value={{session.train_params.epochs}}>
-    </div>
-    <div class="row">
-        momentum: 
-        <input type="number" name="momentum" value={{session.train_params.momentum}}>
-    </div>
-    <div class="row">
-        optimizer: <input type="number" name="optimizer" value={{session.train_params.optimizer}}>
-    </div>
-    <input type="submit">
-</form>
+    <button class="drawing-button">Clear</button>
+    <button class="drawing-button">Submit</button>
+</div>
 {% endblock %}
+
