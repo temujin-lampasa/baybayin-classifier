@@ -1,3 +1,108 @@
+/*General CSS*/
+* {
+  margin: 0;
+}
+
+body {
+  background: #000201;
+  color: #fff;
+  font-family: 'Mulish', sans-serif;
+}
+
+h1 {
+  font-size: 56px;
+}
+
+h2 {
+  font-size: 32px;
+  padding: 16px 16px;
+  background: #B15955;
+  display: inline-block;
+  margin-bottom: 16px;
+}
+
+h3 {
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+
+p {
+  font-size: 16px;
+  line-height: 22px;
+
+}
+
+nav {
+  background: #1E3C3F;
+}
+
+nav a {
+  font-size: 14px;
+  color: #fff;
+  text-decoration: none;
+}
+
+.nav-container {
+  max-width: 1000px;
+  width: 90%;
+  margin: auto;
+  padding: 16px 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+#logo {
+  font-weight: bold;
+}
+
+.nav-subcontainer {
+  max-width: 150px;
+  width: 40%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.nav-subcontainer a:hover {
+  text-decoration: underline;
+}
+
+main {
+  max-width: 1000px;
+  width: 90%;
+  margin: 0 auto 15vh auto;
+}
+
+footer {
+  background: #1E3C3F;
+  padding: 24px 0 24px 0;
+}
+
+footer a {
+  font-size: 16px;
+  color: #fff;
+  text-decoration: none;
+}
+
+.footer-details, .footer-titles {
+  max-width: 1000px;
+  width: 90%;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+}
+
+.footer-titles {
+  border-bottom: #fff solid 2px;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.footer-links {
+  display: flex;
+  flex-direction: column;
+}
+
 input, select {
     width: 25%;
     padding: 12px 20px;
