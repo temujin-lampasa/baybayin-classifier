@@ -22,7 +22,7 @@ DEFAULT_CNN_PARAMS = {
     'filters': 1,
     'kernel_x': 2,
     'kernel_y': 2,
-    'stride_x': 3, 
+    'stride_x': 3,
     'stride_y': 3,
     'padding': 4,
     'pool_x': 5,
@@ -38,6 +38,10 @@ class User(db.Model):
     def __repr__(self):
         return f'<User {id}>'
 
+
+@app.route('/about')
+def about():
+    return render_template("about.html")
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -59,7 +63,7 @@ def index():
             os.mkdir('users')
         if not os.path.exists(f"users/{session['uid']}"):
             os.mkdir(f"users/{session['uid']}")
-        
+
     return render_template("index.html")
 
 
