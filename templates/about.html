@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/about.css') }}">
+{% endblock %}
+
+{% block body %}
+  <div class="header">
+    <h1>About Baybayin Classifier</h1>
+    <p>A project made in fulfillment of CSCI 42. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi a leo urna. Suspendisse felis massa, finibus eu dui vitae, pharetra mattis neque. Etiam libero metus, porttitor mattis ante sit amet, accumsan blandit sapien. Integer ullamcorper mauris et lorem iaculis, a ornare nisl efficitur. Ut in urna vitae nisl ornare feugiat quis ut odio.</p>
+  </div>
+  <div class="about-ml">
+    <h2>About Machine Learning</h2>
+
+    <div class="ml-content">
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi a leo urna. Suspendisse felis massa, finibus eu dui vitae, pharetra mattis neque. Etiam libero metus, porttitor mattis ante sit amet, accumsan blandit sapien. Integer ullamcorper mauris et lorem iaculis, a ornare nisl efficitur. Ut in urna vitae nisl ornare feugiat quis ut odio. Proin sit amet semper ante. Vestibulum lobortis elit eu neque eleifend, vitae ullamcorper odio feugiat. Phasellus et elit velit. Fusce et massa tellus. Sed maximus quam at mi porta, et tempus nibh lacinia. Sed sed pharetra lectus. Integer tempus arcu non nulla dictum, a sollicitudin ex eleifend. Maecenas tempus, nibh at ultrices rutrum, libero mi blandit ex, eget semper neque turpis sed sapien. In hac habitasse platea dictumst. Morbi nec orci justo. In et tortor eget lacus porta molestie sit amet in nisl. Fusce ut justo in massa eleifend placerat. Mauris eget nisi in nunc mattis gravida. In gravida, turpis vitae volutpat tempor, felis risus iaculis metus, in sodales odio nisl quis risus. Sed ultrices accumsan ante, sit amet posuere nunc dictum non. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean fringilla semper mi a tincidunt. Curabitur pellentesque quam vitae porta porta. In viverra felis nisi, mollis aliquet lectus placerat id. Cras at semper dolor. Aliquam erat volutpat.
+      </p>
+
+      <div class="ml-image"></div>
+    </div>
+  </div>
+
+  <div class="about-baybayin">
+    <h2>About Baybayin</h2>
+    <p>Fusce ut justo in massa eleifend placerat. Mauris eget nisi in nunc mattis gravida. In gravida, turpis vitae volutpat tempor, felis risus iaculis metus, in sodales odio nisl quis risus. Sed ultrices accumsan ante, sit amet posuere nunc dictum non. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean fringilla semper mi a tincidunt. Curabitur pellentesque quam vitae porta porta. In viverra felis nisi, mollis aliquet lectus placerat id. Cras at semper dolor. Aliquam erat volutpat.</p>
+
+    <h3>Consonants</h3>
+    <div class="about-baybayin-content" id="consonants">
+      <img src="{{ url_for('static', filename='images/baybayin-consonants.svg') }}" alt="Baybayin Consonants and Their Roman Alphabet Counterparts">
+      <p>Fusce ut justo in massa eleifend placerat. Mauris eget nisi in nunc mattis gravida. In gravida, turpis vitae volutpat tempor, felis risus iaculis metus, in sodales odio nisl quis risus. Sed ultrices accumsan ante, sit amet posuere nunc dictum non. </p>
+    </div>
+
+    <h3>Vowels</h3>
+    <div class="about-baybayin-content" id="vowels-kudlit">
+      <img src="{{ url_for('static', filename='images/baybayin-vowels.svg') }}" alt="Baybayin Vowels and Their Roman Alphabet Counterparts">
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi a leo urna. Suspendisse felis massa, finibus eu dui vitae, pharetra mattis neque. Etiam libero metus, porttitor mattis ante sit amet, accumsan.</p>
+    </div>
+
+    <h3>Kudlit</h3>
+    <div class="about-baybayin-content" id="vowels-kudlit">
+      <img src="{{ url_for('static', filename='images/baybayin-kudlit.svg') }}" alt="Baybayin 'Kudlit' and Their Roman Alphabet Counterparts">
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi a leo urna. Suspendisse felis massa, finibus eu dui vitae, pharetra mattis neque. Etiam libero metus, porttitor mattis ante sit amet, accumsan.</p>
+    </div>
+
+  </div>
+{% endblock %}
