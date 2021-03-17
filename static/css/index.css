@@ -53,4 +53,9 @@
     height:fit-content;
 }
 
-
+.section {
+    flex: none;
+    order: 2;
+    flex-grow: 0;
+    margin: 120px 0px;
+}
