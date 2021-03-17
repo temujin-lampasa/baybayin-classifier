@@ -10,9 +10,35 @@
     {% endblock %}
 </head>
 <body>
-    <div class="content">
+    <nav>
+      <div class="nav-container">
+        <a href="#" id="logo">Baybayin Classifer</a>
+        <div class="nav-subcontainer">
+          <a href="#">Main</a>
+          <a href="#">About</a>
+        </div>
+      </div>
+    </nav>
+
+    <main>
     {% block body %}
     {% endblock %}
-    </div>
+    </main>
+
+    <footer>
+      <div class="footer-titles">
+        <a href="#" id="logo">Baybayin Classifer</a>
+        <p>Bautista et al.</p>
+      </div>
+      <div class="footer-details">
+        <div class="footer-links">
+          <a href="#">Main</a>
+          <a href="#">About</a>
+        </div>
+        <div>
+          <p>AY 2020-2021</p>
+        </div>
+      </div>
+    </footer>
 </body>
 </html>
