@@ -1,0 +1,68 @@
+/*About Page*/
+.header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 95vh;
+}
+
+/*About ML*/
+.ml-content {
+  display: flex;
+}
+
+.ml-content p {
+  width: 50%;
+}
+
+.ml-image {
+  width: 47%;
+  margin-left: 3%;
+  background: #C4C4C4;
+}
+
+/*About Baybayin*/
+.about-baybayin {
+  margin-top: 10vh;
+}
+
+.about-baybayin-content {
+  display: flex;
+  align-items: flex-start;
+}
+
+.about-baybayin h3{
+  margin-top: 32px;
+}
+
+.about-baybayin-content img {
+  margin: 0 40px 8px 0;
+  max-width: 424px;
+}
+
+.about-baybayin-content p {
+  margin-top: 8px;
+}
+
+@media screen and (max-width: 900px) {
+  #consonants {
+    flex-direction: column;
+  }
+  #consonants img {
+    width: 90vw;
+  }
+
+  .ml-content {
+    flex-direction: column;
+  }
+
+  .ml-content p {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  #vowels-kudlit {
+    flex-direction: column;
+  }
+}
