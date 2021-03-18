@@ -58,4 +58,16 @@
     </div>
     <input type="submit">
 </form>
+
+<div>
+    {% if session.classification and session.probability%}
+    <p>Prediction: {{ session.classification }}<br>
+    Probability: {{ session.probability }}%</p>
+    {% endif %}
+</div>
+<form method="POST" action="classify" name="classify" enctype="multipart/form-data">
+    Classify Image
+    <input type="file" name="drawing" id="drawing">
+    <input type="submit">
+</form>
 {% endblock %}
