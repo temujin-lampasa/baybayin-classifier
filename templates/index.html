@@ -15,12 +15,12 @@
             <div class="drawing-canvas"></div>
         </div>
         <div class="drawing-rows">
-            <div class="label-div">
+            <div class="row">
                 <h3 class="drawing-label">Prediction: </h3>
-                <h3 class="drawing-label">Probability: </h3>
-            </div>
-            <div class="label-div">
                 <h3 class="drawing-output">A</h3>
+            </div>
+            <div class="row">
+                <h3 class="drawing-label">Probability: </h3>
                 <h3 class="drawing-output">0%</h3>
             </div>
             <div>
@@ -54,7 +54,7 @@
     <div class="drawing-board">
         <h2>Convolutional Neural Networks</h2>
     </div>
-    <form method="POST" action=".">
+    <form method="POST" action="{{ url_for('cnn') }}">
         <div>
             <h3>What are Convolutional Layers?</h3>
         </div>
@@ -96,7 +96,7 @@
                 
                 <div class='row'>
                     <h3 class="drawing-label">Padding:</h3>
-                    <select name="padding" value={{session.cnn_params.padding}}>
+                    <select name="padding" selected={{session.cnn_params.padding}}>
                         <option>valid</option>
                         <option>same</option>
                     </select>
@@ -142,7 +142,7 @@
                 </div>
                 <div class="row">
                     <h3 class="drawing-label">Activation Function:</h3>
-                    <select name="activation" value={{session.cnn_params.activation}}>
+                    <select name="activation">
                         <option>sigmoid</option>
                         <option>tanh</option>
                         <option>ReLu</option>
@@ -165,7 +165,7 @@
     <div class="drawing-board">
         <h2>Retrain Model</h2>
     </div>
-    <form>
+    <form method="POST" action="{{ url_for('train')}}">
         <div>
             <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.”</p>
         </div>
@@ -182,7 +182,7 @@
                 
                 <div class='row'>
                     <h3 class="drawing-label">Optimizer:</h3>
-                    <select name="optimizer" value={{session.train_params.optimizer}}>
+                    <select name="optimizer" selected={{session.train_params.optimizer}}>
                         <option>SGD</option>
                         <option>Adam</option>
                         <option>Nadam</option>
@@ -197,22 +197,22 @@
 
                 <div class='row'>
                     <h3 class="drawing-label">Beta 1:</h3>
-                    <input type="number" min="0" step="0.01" name="momentum" value={{session.train_params.beta1}}>
+                    <input type="number" min="0" step="0.01" name="beta1" value={{session.train_params.beta1}}>
                 </div>
 
                 <div class='row'>
                     <h3 class="drawing-label">Beta 2:</h3>
-                    <input type="number" min="0" step="0.01" name="momentum" value={{session.train_params.beta2}}>
+                    <input type="number" min="0" step="0.01" name="beta2" value={{session.train_params.beta2}}>
                 </div>
 
                 <div class='row'>
                     <h3 class="drawing-label">Batch Size:</h3>
-                    <input type="number" min="0" step="0.01" name="momentum" value={{session.train_params.batch_size}}>
+                    <input type="number" min="0" step="0.01" name="batch_size" value={{session.train_params.batch_size}}>
                 </div>
 
                 <div class='row'>
                     <h3 class="drawing-label">Epochs:</h3>
-                    <input type="number" min="0" step="0.01" name="momentum" value={{session.train_params.epochs}}>
+                    <input type="number" min="0" name="epochs" value={{session.train_params.epochs}}>
                 </div>
             </div>
         </div>

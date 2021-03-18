@@ -59,6 +59,9 @@ def about():
 def index():
     if not session.get('train_params'):
         session['train_params'] = DEFAULT_TRAIN_PARAMS
+    
+    print("Current train params")
+    print(session['train_params'])
 
     if not session.get('cnn_params'):
         session['cnn_params'] = DEFAULT_CNN_PARAMS
