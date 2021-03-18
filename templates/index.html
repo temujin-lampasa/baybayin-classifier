@@ -110,7 +110,7 @@
                 
                 <div class='row'>
                     <h3 class="drawing-label">Batch Norm:</h3>
-                    <input type="number" min="0" name="batch_norm" value={{session.cnn_params.batch_norm}}>
+                    <button>X</button>
                 </div>
             </div>
         </div>
@@ -134,11 +134,11 @@
                 </div>
                 <div class="row">
                     <h3 class="drawing-label">Output Size:</h3>
-                    <input type="number" min="0" name="output" value={{session.train_params.output}}>
+                    <input type="number" min="0" name="output_size" value={{session.cnn_params.output_size}}>
                 </div>
                 <div class="row">
                     <h3 class="drawing-label">Dropout:</h3>
-                    <input type="number" min="0" step="0.01" name="dropout" value={{session.train_params.dropout}}>
+                    <input type="number" min="0" step="0.01" name="dropout" value={{session.cnn_params.dropout}}>
                 </div>
                 <div class="row">
                     <h3 class="drawing-label">Activation Function:</h3>
@@ -181,20 +181,38 @@
                 </div>
                 
                 <div class='row'>
-                    <h3 class="drawing-label">Filters:</h3>
-                    <input type="number" min="0" name="filters" value={{session.cnn_params.filters}}>
+                    <h3 class="drawing-label">Optimizer:</h3>
+                    <select name="optimizer" value={{session.train_params.optimizer}}>
+                        <option>SGD</option>
+                        <option>Adam</option>
+                        <option>Nadam</option>
+                        <option>RMSProp</option>
+                    </select>
                 </div>
 
                 <div class='row'>
-                    <h3 class="drawing-label">Kernel:</h3>
-                    <input type="number" min="0" name="kernel_x" value={{session.cnn_params.kernel_x}}>
-                    <input type="number" min="0" name="kernel_y" value={{session.cnn_params.kernel_y}}>
+                    <h3 class="drawing-label">Learning Rate:</h3>
+                    <input type="number" min="0" step="0.01" name="learning_rate" value={{session.train_params.learning_rate}}>
                 </div>
 
                 <div class='row'>
-                    <h3 class="drawing-label">Strides:</h3>
-                    <input type="number" min="0" name="stride_x" value={{session.cnn_params.stride_x}}> 
-                    <input type="number" min="0" name="stride_y" value={{session.cnn_params.stride_y}}>
+                    <h3 class="drawing-label">Beta 1:</h3>
+                    <input type="number" min="0" step="0.01" name="momentum" value={{session.train_params.beta1}}>
+                </div>
+
+                <div class='row'>
+                    <h3 class="drawing-label">Beta 2:</h3>
+                    <input type="number" min="0" step="0.01" name="momentum" value={{session.train_params.beta2}}>
+                </div>
+
+                <div class='row'>
+                    <h3 class="drawing-label">Batch Size:</h3>
+                    <input type="number" min="0" step="0.01" name="momentum" value={{session.train_params.batch_size}}>
+                </div>
+
+                <div class='row'>
+                    <h3 class="drawing-label">Epochs:</h3>
+                    <input type="number" min="0" step="0.01" name="momentum" value={{session.train_params.epochs}}>
                 </div>
             </div>
         </div>

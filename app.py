@@ -20,24 +20,26 @@ app.config['SECRET_KEY'] = '\xd7\x15\xf4\x13k{\xb7b\xfe;D\n\xf3fa7\x9a\x0e\x87q\
 db = SQLAlchemy(app)
 
 DEFAULT_TRAIN_PARAMS = {
-    'directory': 1,
-    'learning_rate': 2,
-    'batch_size': 3,
-    'epochs': 4,
-    'momentum': 5,
-    'optimizer': '6',
+    'optimizer': 'SGD',
+    'learning_rate': 0.00,
+    'momentum': 0.00,
+    'beta1': 0.00,
+    'beta2': 0.00,
+    'batch_size': 32,    
+    'epochs': 1,
 }
 DEFAULT_CNN_PARAMS = {
     'filters': 1,
-    'kernel_x': 2,
-    'kernel_y': 2,
-    'stride_x': 3,
-    'stride_y': 3,
-    'padding': "same",
-    'pool_x': 5,
-    'pool_y': 5,
-    'batch_norm': 6,
-    'activation': "sigmoid"
+    'kernel_x': 1,
+    'kernel_y': 1,
+    'stride_x': 1,
+    'stride_y': 1,
+    'padding': "valid",
+    'pool_x':1,
+    'pool_y': 1,
+    'output_size': 1,
+    'dropout': 1.0,
+    'activation': "sigmoid",
  }
 
 
