@@ -1,14 +1,15 @@
 from flask import Flask, render_template, url_for, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
-from PIL import Image
-import torch
-import torch.nn.functional as F
 from datetime import datetime
 import io
 import os
 
-from models import baybayin_net, pre_process_image, classes
 from models import DEFAULT_CNN_PARAMS as BAYBAYIN_DEFAULT_CNN
+
+from models import baybayin_net, pre_process_image, classes
+from PIL import Image
+import torch
+import torch.nn.functional as F
 
 
 app = Flask(__name__)
