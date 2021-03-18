@@ -9,15 +9,6 @@
     margin-top: 20px;
 }
 
-.columns{
-    display: flex;
-    flex-direction:row;
-    columns: 2;
-}
-
-.columns p{
-    width: 80%;
-}
 .drawing-canvas-background{
     background-color: #1E3C3F;
     width: 96vw;
@@ -61,7 +52,11 @@
     margin-left: 10px;
 }
 
-.rows {
+.columns{
+    display: flex;
+    flex-direction:row;
+    columns: 2;
+    column-gap:10%;
     width: 100%;
 }
 
@@ -100,11 +95,11 @@ form {
     display: flex;
     flex-direction:row;
     margin-top: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 40px;
 }
 
 .form-submit {
-    width: 80%;
+    width: 100%;
     margin-top: 10px;
     margin-right: 10px;
     background: #1E3C3F;
