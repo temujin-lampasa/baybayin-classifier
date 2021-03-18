@@ -117,6 +117,10 @@ h3 {
     font-family: 'Mulish', sans-serif;
 }
 
+input#drawing {
+    width: fit-content;
+}
+
 input, button, select {
     font-size: 18px;
     font-family: 'Mulish', sans-serif;
