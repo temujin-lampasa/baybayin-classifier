@@ -53,16 +53,20 @@
 }
 
 .columns{
-    display: flex;
-    flex-direction:row;
-    columns: 2;
-    column-gap:10%;
+    column-count: 2;
     width: 100%;
 }
+
+
 
 .rows {
     width: 100%;
 }
+
+.row {
+    width: 100%;
+}
+
 .label-div{
     display: flex;
     flex-direction: column;
@@ -98,6 +102,12 @@ form {
     margin-bottom: 40px;
 }
 
+.input-label{
+    background: #1E3C3F;
+    padding:10px;
+    float:left;
+}
+
 .form-submit {
     width: 100%;
     margin-top: 10px;
@@ -107,3 +117,4 @@ form {
     color: #fff;
     font-family: 'Mulish', sans-serif;
 }
+
