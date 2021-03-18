@@ -7,11 +7,11 @@
 .drawing-board {
     margin-top: 20px;
 }
-.drawing-content{
+.columns{
     display: flex;
     flex-direction:row;
 }
-.drawing-content p{
+.columns p{
     width: 80%;
 }
 .drawing-canvas-background{
@@ -42,9 +42,14 @@
     color: #fff;
     font-family: 'Mulish', sans-serif;
 }
-.rows{
+
+.drawing-content{
     flex-direction: row;
     margin-left: 10px;
+}
+
+.rows {
+    width: 100%;
 }
 .label-div{
     display: flex;
@@ -58,4 +63,12 @@
     order: 2;
     flex-grow: 0;
     margin: 120px 0px;
+}
+
+.form-button {
+    margin-top: 10px;
+    margin-right: 10px;
+    background: #E5E5E5;
+    font-size: 32px;
+    font-family: 'Mulish', sans-serif;
 }
