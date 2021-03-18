@@ -62,6 +62,8 @@ class baybayin_net(nn.Module):
                 )
             )
 
+            self.conv_layers.append(activation_fn)
+
             if args['batch_norm']:
                 self.conv_layers.append(nn.BatchNorm2d(conv_layer['filters']))
       
@@ -106,12 +108,12 @@ def pre_process_image(image):
                             transforms.Pad(16, fill=1), # pad dimensions in case current dimensions are less than 32x32
                             transforms.CenterCrop(32), # crop to 32x32
                             transforms.Lambda(
-                                lambda x : x.expand(3, -1, -1)
-                            ),
+                                lambda x : x.expand(3, -1, -1) if x.shape[0] != 3 else x
+                            ), # expand 1 x 32 x 32 image to 3 x 32 x 32
                             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)) # normalize between 1 and -1
     ])(image)
 
-def get_transforms():
+def create_transforms():
     return transforms.Compose([
                             transforms.ToTensor(),
                             transforms.Lambda(
@@ -124,12 +126,10 @@ def get_transforms():
                             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)) # normalize between 1 and -1
     ])
 
-def train_model(model, save_path, args):
+def create_loaders(batch_size):
 
-    print(model)
+    tfs = create_transforms()
 
-    tfs = get_transforms()
-  
     print('Creating dataset...', end='')
     if os.path.isfile('baybayin_images.pickle'):
         # load baybayin images dataset from file if it exists
@@ -144,32 +144,76 @@ def train_model(model, save_path, args):
 
     # split images into train and test sets
     print('Creating train and test sets...', end='')
-    if os.path.isfile('baybayin_train.picke') and os.path.isfile('baybayin_test.pickle'):
+    if os.path.isfile('baybayin_train.pickle') and os.path.isfile('baybayin_test.pickle'):
         with open('baybayin_train.pickle', 'rb') as file:
             baybayin_train = dill.load(file)
-        with open('baybayin_test.picke', 'rb') as file:
+        with open('baybayin_test.pickle', 'rb') as file:
             baybayin_test = dill.load(file)
     else:
         baybayin_train, baybayin_test = train_test_split(baybayin_images, train_size=0.7, stratify=([y for _, y in baybayin_images]), random_state=42)
         with open('baybayin_train.pickle', 'wb') as file:
             dill.dump(baybayin_train, file)
-        with open('baybayin_test.picke', 'wb') as file:
+        with open('baybayin_test.pickle', 'wb') as file:
             dill.dump(baybayin_test, file)
     print('Done')
 
     # create train and test loaders
-    baybayin_trainloader = torch.utils.data.DataLoader(baybayin_train, batch_size=args['batch_size'], shuffle=True, num_workers=2)
-    baybayin_testloader = torch.utils.data.DataLoader(baybayin_test, batch_size=args['batch_size'], shuffle=True, num_workers=2)
+    baybayin_trainloader = torch.utils.data.DataLoader(baybayin_train, batch_size=batch_size, shuffle=True, num_workers=2)
+    baybayin_testloader = torch.utils.data.DataLoader(baybayin_test, batch_size=batch_size, shuffle=True, num_workers=2)
+
+    return baybayin_trainloader, baybayin_testloader
+
+def train_model(save_path, cnn_args, train_args):
+
+    # initialize model
+    model = baybayin_net(cnn_args)
+    print(model)
+
+    # tfs = get_transforms()
+  
+    # print('Creating dataset...', end='')
+    # if os.path.isfile('baybayin_images.pickle'):
+    #     # load baybayin images dataset from file if it exists
+    #     with open('baybayin_images.pickle', 'rb') as file:
+    #         baybayin_images = dill.load(file)
+    # else:
+    #     # create baybayin images and save it to a file
+    #     baybayin_images = ImageFolder(root='./Baybayin-Handwritten-Character-Dataset/raw', transform=tfs)
+    #     with open('baybayin_images.pickle', 'wb') as file:
+    #         dill.dump(baybayin_images, file)
+    # print('Done')
+
+    # # split images into train and test sets
+    # print('Creating train and test sets...', end='')
+    # if os.path.isfile('baybayin_train.picke') and os.path.isfile('baybayin_test.pickle'):
+    #     with open('baybayin_train.pickle', 'rb') as file:
+    #         baybayin_train = dill.load(file)
+    #     with open('baybayin_test.picke', 'rb') as file:
+    #         baybayin_test = dill.load(file)
+    # else:
+    #     baybayin_train, baybayin_test = train_test_split(baybayin_images, train_size=0.7, stratify=([y for _, y in baybayin_images]), random_state=42)
+    #     with open('baybayin_train.pickle', 'wb') as file:
+    #         dill.dump(baybayin_train, file)
+    #     with open('baybayin_test.picke', 'wb') as file:
+    #         dill.dump(baybayin_test, file)
+    # print('Done')
+
+    # # create train and test loaders
+    # baybayin_trainloader = torch.utils.data.DataLoader(baybayin_train, batch_size=args['batch_size'], shuffle=True, num_workers=2)
+    # baybayin_testloader = torch.utils.data.DataLoader(baybayin_test, batch_size=args['batch_size'], shuffle=True, num_workers=2)
+
+    #create train and test loaders
+    baybayin_trainloader, baybayin_testloader = create_loaders(train_args['batch_size'])
 
     # initialize optimizer
-    if args['optimizer_class'] == 'SGD':
-        optimizer = optim.SGD(model.parameters(), lr=args['learning_rate'], momentum=args['momentum'])
-    elif args['optimizer_class'] == 'Adam':
-        optimizer = optim.Adam(model.parameters(), lr=args['learning_rate'], betas=args['betas'])
+    if train_args['optimizer_class'] == 'SGD':
+        optimizer = optim.SGD(model.parameters(), lr=train_args['learning_rate'], momentum=train_args['momentum'])
+    elif train_args['optimizer_class'] == 'Adam':
+        optimizer = optim.Adam(model.parameters(), lr=train_args['learning_rate'], betas=train_args['betas'])
 
     criterion = nn.CrossEntropyLoss() # initialize loss
 
-    for epoch in range(args['epochs']):  # loop over the dataset multiple times
+    for epoch in range(train_args['epochs']):  # loop over the dataset multiple times
 
         running_loss = 0
         for i, data in tqdm(enumerate(baybayin_trainloader, 0), desc=f'Epoch {epoch}'):
@@ -193,6 +237,22 @@ def train_model(model, save_path, args):
     torch.save(model.state_dict(), save_path)
     print('Finished Training')
 
+def evaluate_model(load_path, cnn_args, train_args):
+    model = baybayin_net(cnn_args)
+    model.load_state_dict(torch.load(load_path))
+    print(model)
+    _, baybayin_testloader = create_loaders(train_args['batch_size'])
+    correct = 0
+    total = 0
+    model.eval()
+    with torch.no_grad():
+        for data in baybayin_testloader:
+            images, labels = data
+            outputs = model(images)
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+    print(f'Accuracy on {len(baybayin_testloader)}-image test set: {100*correct/total:.2f}%')
 
 DEFAULT_CNN_PARAMS = {
 'conv_layer_configs' : [
@@ -224,10 +284,5 @@ DEFAULT_TRAIN_PARAMS = {
     'momentum' : 0.9
 }
 
-# foo = baybayin_net(DEFAULT_CNN_PARAMS)
-# print(foo)
-# print(foo(torch.randn(1, 3, 32, 32)))
-# train_model(foo, 'test.pt', DEFAULT_TRAIN_PARAMS)
-# bar = baybayin_net(DEFAULT_CNN_PARAMS)
-# print(bar)
-# bar.load_state_dict(torch.load('test.pt'))
+# train_model('default0.pt', DEFAULT_CNN_PARAMS, DEFAULT_TRAIN_PARAMS)
+evaluate_model('default.pt', DEFAULT_CNN_PARAMS, DEFAULT_TRAIN_PARAMS)
