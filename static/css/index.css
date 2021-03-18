@@ -25,6 +25,7 @@
 .drawing-label{
     background: #1E3C3F;
     padding:10px;
+    margin-right: 10px;
 }
 
 .drawing-output{
@@ -102,10 +103,8 @@ form {
     margin-bottom: 40px;
 }
 
-.input-label{
-    background: #1E3C3F;
-    padding:10px;
-    float:left;
+h3 {
+    display:inline-block;
 }
 
 .form-submit {
@@ -118,3 +117,12 @@ form {
     font-family: 'Mulish', sans-serif;
 }
 
+input, button {
+    font-size: 18px;
+    font-family: 'Mulish', sans-serif;
+}
+
+button {
+    height: 50px;
+    width: 50px;
+}

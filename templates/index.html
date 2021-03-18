@@ -66,20 +66,54 @@
             <div class="input-fields">
 
                 <div class="columns">
-                    <div class="label-div">
-                            <h3 class="drawing-label">Convolutions:</h3>
+                    <div>
+                        <div class='row'>
+                            <h3 class="drawing-label">Convolutions:</h3> 
+                            <button>1</button> 
+                            <button>2</button> 
+                            <button>3</button>
+                            <button>4</button>
+                        </div>
+                        
+                        <div class='row'>
                             <h3 class="drawing-label">Filters:</h3>
+                            <input type="number" name="filters" value={{session.cnn_params.filters}}>
+                        </div>
+
+                        <div class='row'>
                             <h3 class="drawing-label">Kernel:</h3>
+                            <input type="number" name="kernel_x" value={{session.cnn_params.kernel_x}}>
+                            <input type="number" name="kernel_y" value={{session.cnn_params.kernel_y}}>
+                        </div>
+
+                        <div class='row'>
                             <h3 class="drawing-label">Strides:</h3>
+                            <input type="number" name="stride_x" value={{session.cnn_params.stride_x}}> 
+                            <input type="number" name="stride_y" value={{session.cnn_params.stride_y}}>
+                        </div>
                     </div>
 
-                    <div class="columns">
-                    <div class="label-div">
-                        <h3 class="drawing-label">On:</h3>
-                        <h3 class="drawing-label">Padding:</h3>
-                        <h3 class="drawing-label">Pool Size:</h3>
-                        <h3 class="drawing-label">Batch Norm:</h3>
-                    </div>
+                    <div>
+                        <div class='row'>
+                            <h3 class="drawing-label">On:</h3>
+                            <input type="number" name="on" value={{session.cnn_params.cnn_on}}> 
+                        </div>
+                        
+                        <div class='row'>
+                            <h3 class="drawing-label">Padding:</h3>
+                            <input type="number" name="padding" value={{session.cnn_params.padding}}>
+                        </div>
+
+                        <div class='row'>
+                            <h3 class="drawing-label">Pool Size:</h3>
+                            <input type="number" name="pool_x" value={{session.cnn_params.pool_x}}> 
+                            <input type="number" name="pool_y" value={{session.cnn_params.pool_y}}>
+                        </div>
+                        
+                        <div class='row'>
+                            <h3 class="drawing-label">Batch Norm:</h3>
+                            <input type="number" name="batch_norm" value={{session.cnn_params.batch_norm}}>
+                        </div>
                     </div>
                 </div>
             </div>
