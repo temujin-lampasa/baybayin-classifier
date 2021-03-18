@@ -33,10 +33,11 @@ DEFAULT_CNN_PARAMS = {
     'kernel_y': 2,
     'stride_x': 3,
     'stride_y': 3,
-    'padding': 4,
+    'padding': "same",
     'pool_x': 5,
     'pool_y': 5,
-    'batch_norm': 6
+    'batch_norm': 6,
+    'activation': "sigmoid"
  }
 
 

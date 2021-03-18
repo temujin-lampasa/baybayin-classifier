@@ -59,13 +59,12 @@
 }
 
 
-
-.rows {
-    width: 100%;
-}
-
 .row {
-    width: 100%;
+    display: flex;
+}
+  
+.column {
+flex: 50%;
 }
 
 .label-div{
@@ -117,7 +116,7 @@ h3 {
     font-family: 'Mulish', sans-serif;
 }
 
-input, button {
+input, button, select {
     font-size: 18px;
     font-family: 'Mulish', sans-serif;
 }
