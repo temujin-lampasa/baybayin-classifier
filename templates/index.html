@@ -52,11 +52,11 @@
                 <div class="rows">
                     <div class="label-div">
                         <h3 class="drawing-label">Convolutions</h3>
-            
+
                         <h3 class="drawing-label">Filters</h3>
                         <h3 class="drawing-label">Kernel</h3>
                         <h3 class="drawing-label">Strides</h3>
-                    </div>                
+                    </div>
                 </div>
 
                 <div class="rows">
@@ -68,7 +68,7 @@
                     </div>
                 </div>
             </div>
-            
+
 
             <div>
                 <h3>What are Fully Connected Layers?</h3>
@@ -94,5 +94,16 @@
         </div>
     </div>
 </div>
-{% endblock %}
 
+<div>
+    {% if session.classification and session.probability%}
+    <p>Prediction: {{ session.classification }}<br>
+    Probability: {{ session.probability }}%</p>
+    {% endif %}
+</div>
+<form method="POST" action="classify" name="classify" enctype="multipart/form-data">
+    Classify Image
+    <input type="file" name="drawing" id="drawing">
+    <input type="submit">
+</form>
+{% endblock %}
