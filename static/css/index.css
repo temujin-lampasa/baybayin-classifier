@@ -38,8 +38,8 @@
     margin-top: 10px;
     margin-right: 10px;
     background: #1E3C3F;
-    font-size: 32px;
     color: #fff;
+    font-size: 24px;
     font-family: 'Mulish', sans-serif;
 }
 
@@ -53,18 +53,19 @@
     margin-left: 10px;
 }
 
-.columns{
-    column-count: 2;
-    width: 100%;
+.row {
+    width: 900px;
 }
 
-
-.row {
-    display: flex;
+.row:after {
+content: "";
+display: table;
+clear: both;
 }
   
 .column {
-flex: 50%;
+display: inline-block;
+width: 50%;
 }
 
 .label-div{
