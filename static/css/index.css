@@ -4,13 +4,17 @@
     justify-content: center;
     min-height: 95vh;
 }
+
 .drawing-board {
     margin-top: 20px;
 }
+
 .columns{
     display: flex;
     flex-direction:row;
+    columns: 2;
 }
+
 .columns p{
     width: 80%;
 }
@@ -20,20 +24,24 @@
     height: 24vh;
     padding: 20px;
 }
+
 .drawing-canvas{
     background-color: #C4C4C4;
     width:100%;
     height:100%;
 }
+
 .drawing-label{
     background: #1E3C3F;
     padding:10px;
 }
+
 .drawing-output{
     background: #E1A46D;
     padding:10px;
     margin-left: 10px;
 }
+
 .drawing-button{
     margin-top: 10px;
     margin-right: 10px;
@@ -44,8 +52,17 @@
 }
 
 .drawing-content{
+    display: flex;
+    flex-direction:row;
+}
+
+.drawing-rows{
     flex-direction: row;
     margin-left: 10px;
+}
+
+.rows {
+    width: 100%;
 }
 
 .rows {
@@ -70,5 +87,28 @@
     margin-right: 10px;
     background: #E5E5E5;
     font-size: 32px;
+    font-family: 'Mulish', sans-serif;
+}
+
+form {
+    background: None;
+    width: 100%;
+    padding: 0px;
+}
+
+.input-fields {
+    display: flex;
+    flex-direction:row;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.form-submit {
+    width: 80%;
+    margin-top: 10px;
+    margin-right: 10px;
+    background: #1E3C3F;
+    font-size: 24px;
+    color: #fff;
     font-family: 'Mulish', sans-serif;
 }
