@@ -1,15 +1,11 @@
 from flask import Flask, render_template, url_for, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-import io
 import os
 
-# from models import DEFAULT_CNN_PARAMS as BAYBAYIN_DEFAULT_CNN
+from models import DEFAULT_CNN_PARAMS as BAYBAYIN_DEFAULT_CNN
 
-# from models import baybayin_net, pre_process_image, classes
-# from PIL import Image
-# import torch
-# import torch.nn.functional as F
+from models import baybayin_net, classify_uploaded_file
 
 
 app = Flask(__name__)
@@ -98,29 +94,20 @@ def cnn():
     return redirect('/')
 
 
-# @app.route('/classify', methods=['POST'])
-# def classify():
-#     # classify image here
-#     if request.files["drawing"]:
-#         drawing = request.files["drawing"]
-#         drawing = drawing.read()
-#         drawing = pre_process_image(Image.open(io.BytesIO(drawing))).unsqueeze(0)
-#         classifier = baybayin_net(BAYBAYIN_DEFAULT_CNN)
-#         classifier.load_state_dict(torch.load("default.pt"))
-#         print(classifier)
-#         predictions = F.softmax(classifier(drawing), 1)
-#         probability, class_index = predictions.max(1)
-#         classification = classes[class_index.item()]
-#         print("Prediction:", classification)
-#         print("probability:", probability.item())
-#         session['classification'] = classification
-#         session['probability'] = f'{probability.item()*100:.2f}'
-#     else:
-#         if session.get("classification"):
-#             del session["classification"]
-#         if session.get("probability"):
-#             del session["probability"]
-#     return redirect('/')
+@app.route('/classify', methods=['POST'])
+def classify():
+    # classify image here
+    if request.files["drawing"]:
+        drawing = request.files["drawing"]
+        classification, probability = classify_uploaded_file(drawing)
+        session['classification'] = classification
+        session['probability'] = f'{probability*100:.2f}'
+    else:
+        if session.get("classification"):
+            del session["classification"]
+        if session.get("probability"):
+            del session["probability"]
+    return redirect('/')
 
 def get_feature_maps(args):
     print("Getting feature maps...")

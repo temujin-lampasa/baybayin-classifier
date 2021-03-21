@@ -1,17 +1,53 @@
 from math import floor, ceil
+import io
 import os
 
 import dill
 from sklearn.model_selection import train_test_split
+from PIL import Image
 from tqdm import tqdm
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 import torch.optim as optim
 from torchvision.datasets import ImageFolder
 from torchvision import transforms
 
 
 classes = ['a', 'ba', 'dara', 'ei', 'ga', 'ha', 'ka', 'kuw', 'la', 'ma', 'na', 'nga', 'ou', 'pa', 'sa', 'ta', 'tul', 'wa', 'ya']
+
+
+DEFAULT_CNN_PARAMS = {
+'conv_layer_configs' : [
+                        {'filters' : 6,
+                        'kernel_size' : (5, 5),
+                        'stride' : (1, 1),
+                        'pool' : (2, 2),
+                        'padding' : 'valid'},
+                        {'filters' : 16,
+                        'kernel_size' : (5, 5),
+                        'stride' : (1, 1),
+                        'pool' : (2, 2),
+                        'padding' : 'valid'}
+                    ],
+'fc_layer_configs' : [
+                        {'size' : 120},
+                        {'size' : 84},
+                    ],
+'batch_norm' : False,
+'dropout' : 0.0,
+'activation_fn' : 'ReLU'
+}
+
+
+DEFAULT_TRAIN_PARAMS = {
+    'epochs' : 2,
+    'batch_size' : 4,
+    'optimizer_class' : 'SGD',
+    'learning_rate' : 0.001,
+    'momentum' : 0.9
+}
+
 
 def same_pad_values(dim, kernel_size, stride=(1, 1)):
     total_h_pad = stride[0]*dim[0]-dim[0]+kernel_size[0]-stride[0]
@@ -97,6 +133,7 @@ class baybayin_net(nn.Module):
             x = layer(x)
         return x
 
+
 def pre_process_image(image):
     return transforms.Compose([
                             transforms.ToTensor(),
@@ -125,6 +162,7 @@ def create_transforms():
                             transforms.CenterCrop(32), # crop to 32x32
                             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)) # normalize between 1 and -1
     ])
+
 
 def create_loaders(batch_size):
 
@@ -163,44 +201,12 @@ def create_loaders(batch_size):
 
     return baybayin_trainloader, baybayin_testloader
 
+
 def train_model(save_path, cnn_args, train_args):
 
     # initialize model
     model = baybayin_net(cnn_args)
     print(model)
-
-    # tfs = get_transforms()
-  
-    # print('Creating dataset...', end='')
-    # if os.path.isfile('baybayin_images.pickle'):
-    #     # load baybayin images dataset from file if it exists
-    #     with open('baybayin_images.pickle', 'rb') as file:
-    #         baybayin_images = dill.load(file)
-    # else:
-    #     # create baybayin images and save it to a file
-    #     baybayin_images = ImageFolder(root='./Baybayin-Handwritten-Character-Dataset/raw', transform=tfs)
-    #     with open('baybayin_images.pickle', 'wb') as file:
-    #         dill.dump(baybayin_images, file)
-    # print('Done')
-
-    # # split images into train and test sets
-    # print('Creating train and test sets...', end='')
-    # if os.path.isfile('baybayin_train.picke') and os.path.isfile('baybayin_test.pickle'):
-    #     with open('baybayin_train.pickle', 'rb') as file:
-    #         baybayin_train = dill.load(file)
-    #     with open('baybayin_test.picke', 'rb') as file:
-    #         baybayin_test = dill.load(file)
-    # else:
-    #     baybayin_train, baybayin_test = train_test_split(baybayin_images, train_size=0.7, stratify=([y for _, y in baybayin_images]), random_state=42)
-    #     with open('baybayin_train.pickle', 'wb') as file:
-    #         dill.dump(baybayin_train, file)
-    #     with open('baybayin_test.picke', 'wb') as file:
-    #         dill.dump(baybayin_test, file)
-    # print('Done')
-
-    # # create train and test loaders
-    # baybayin_trainloader = torch.utils.data.DataLoader(baybayin_train, batch_size=args['batch_size'], shuffle=True, num_workers=2)
-    # baybayin_testloader = torch.utils.data.DataLoader(baybayin_test, batch_size=args['batch_size'], shuffle=True, num_workers=2)
 
     #create train and test loaders
     baybayin_trainloader, baybayin_testloader = create_loaders(train_args['batch_size'])
@@ -237,7 +243,8 @@ def train_model(save_path, cnn_args, train_args):
     torch.save(model.state_dict(), save_path)
     print('Finished Training')
 
-def evaluate_model(load_path, cnn_args, train_args):
+
+def evaluate_model(load_path='default.pt', cnn_args, train_args):
     model = baybayin_net(cnn_args)
     model.load_state_dict(torch.load(load_path))
     print(model)
@@ -254,35 +261,20 @@ def evaluate_model(load_path, cnn_args, train_args):
             correct += (predicted == labels).sum().item()
     print(f'Accuracy on {len(baybayin_testloader)}-image test set: {100*correct/total:.2f}%')
 
-DEFAULT_CNN_PARAMS = {
-'conv_layer_configs' : [
-                        {'filters' : 6,
-                        'kernel_size' : (5, 5),
-                        'stride' : (1, 1),
-                        'pool' : (2, 2),
-                        'padding' : 'valid'},
-                        {'filters' : 16,
-                        'kernel_size' : (5, 5),
-                        'stride' : (1, 1),
-                        'pool' : (2, 2),
-                        'padding' : 'valid'}
-                    ],
-'fc_layer_configs' : [
-                        {'size' : 120},
-                        {'size' : 84},
-                    ],
-'batch_norm' : False,
-'dropout' : 0.0,
-'activation_fn' : 'ReLU'
-}
 
-DEFAULT_TRAIN_PARAMS = {
-    'epochs' : 2,
-    'batch_size' : 4,
-    'optimizer_class' : 'SGD',
-    'learning_rate' : 0.001,
-    'momentum' : 0.9
-}
+def classify_uploaded_file(load_path='default.pt', uploaded_file):
+    drawing = uploaded_file.read()
+    drawing = pre_process_image(Image.open(io.BytesIO(drawing))).unsqueeze(0)
+    classifier = baybayin_net(DEFAULT_CNN_PARAMS)
+    classifier.load_state_dict(torch.load(load_path))
+    print(classifier)
+    predictions = F.softmax(classifier(drawing), 1)
+    probability, class_index = predictions.max(1)
+    classification = classes[class_index.item()]
+    probability = probability.item()
+    print('Prediction:', classification)
+    print('Probability:', probability)
+    return classification, probability
 
-# train_model('default0.pt', DEFAULT_CNN_PARAMS, DEFAULT_TRAIN_PARAMS)
-evaluate_model('default.pt', DEFAULT_CNN_PARAMS, DEFAULT_TRAIN_PARAMS)
+# train_model('default.pt', DEFAULT_CNN_PARAMS, DEFAULT_TRAIN_PARAMS)
+# evaluate_model('default.pt', DEFAULT_CNN_PARAMS, DEFAULT_TRAIN_PARAMS)
