@@ -1,6 +1,6 @@
 from wtforms.widgets.html5 import NumberInput
-from wtforms.fields.html5 import IntegerField
-from wtforms.fields import FieldList, FormField, StringField
+from wtforms.fields.html5 import IntegerField, DecimalField
+from wtforms.fields import FieldList, FormField, SelectField
 from wtforms import Form, validators
 
 from wtforms import (
@@ -18,7 +18,12 @@ class CNNForm(Form):
     kernel = FormField(XY_Form)
     stride = FormField(XY_Form)
 
-    on = BooleanField('On')
+    conv_layer_on = BooleanField('conv_on')
     padding = SelectField('Padding:', choices=["same", "valid"])
-    pool = FormField(XY_Form)
+    pool_size = FormField(XY_Form)
     batch_norm = BooleanField('Batch Norm')
+
+    output_size = IntegerField('output_size')
+    dropout = DecimalField('dropout', places=1, widget=NumberInput(step=0.1))
+    activation = SelectField('activation', choices=['sigmoid', 'tanh', 'ReLu'])
+    dense_layer_on = BooleanField('dense_on')
