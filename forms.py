@@ -27,3 +27,12 @@ class CNNForm(Form):
     dropout = DecimalField('dropout', places=1, widget=NumberInput(step=0.1))
     activation = SelectField('activation', choices=['sigmoid', 'tanh', 'ReLu'])
     dense_layer_on = BooleanField('dense_on')
+
+
+class RetrainModelForm(Form):
+    optimizer = SelectField('optimizer', choices=['SGD', 'Adam', 'Nadam', 'RMSProp'])
+    learning_rate = DecimalField('dropout', places=2, widget=NumberInput(step=0.01))
+    beta1 = DecimalField('beta1', places=2, widget=NumberInput(step=0.01))
+    beta2 = DecimalField('beta2', places=2, widget=NumberInput(step=0.01))
+    batch_size = IntegerField('batch_size')
+    epochs = IntegerField('epochs')

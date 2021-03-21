@@ -11,7 +11,7 @@ import os
 # import torch
 # import torch.nn.functional as F
 
-from forms import CNNForm
+from forms import CNNForm, RetrainModelForm
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -60,6 +60,7 @@ def about():
 def index():
     # Forms
     cnn_form = CNNForm()
+    retrain_form = RetrainModelForm()
 
     if not session.get('train_params'):
         session['train_params'] = DEFAULT_TRAIN_PARAMS
@@ -83,7 +84,9 @@ def index():
         if not os.path.exists(f"users/{session['uid']}"):
             os.mkdir(f"users/{session['uid']}")
 
-    return render_template("index.html", cnn_form=cnn_form)
+    return render_template("index.html",
+                           cnn_form=cnn_form,
+                           retrain_form=retrain_form)
 
 
 @app.route('/train', methods=['POST'])

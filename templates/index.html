@@ -101,7 +101,7 @@
             {{ render_field(cnn_form.output_size) }}
             {{ render_field(cnn_form.dropout) }}
             {{ render_field(cnn_form.activation) }}
-        </fieldset>
+        </fieldset> 
     <input type='submit' value="Show CNN" class='form-submit'>
     </form>
 </div>
@@ -116,42 +116,14 @@
         </div>
 
         <div class="input-fields">
-            <div>
-                <div class='row'>
-                    <h3 class="drawing-label">Optimizer:</h3>
-                    <select name="optimizer" selected={{session.train_params.optimizer}}>
-                        <option>SGD</option>
-                        <option>Adam</option>
-                        <option>Nadam</option>
-                        <option>RMSProp</option>
-                    </select>
-                </div>
-
-                <div class='row'>
-                    <h3 class="drawing-label">Learning Rate:</h3>
-                    <input type="number" min="0" step="0.01" name="learning_rate" value={{session.train_params.learning_rate}}>
-                </div>
-
-                <div class='row'>
-                    <h3 class="drawing-label">Beta 1:</h3>
-                    <input type="number" min="0" step="0.01" name="beta1" value={{session.train_params.beta1}}>
-                </div>
-
-                <div class='row'>
-                    <h3 class="drawing-label">Beta 2:</h3>
-                    <input type="number" min="0" step="0.01" name="beta2" value={{session.train_params.beta2}}>
-                </div>
-
-                <div class='row'>
-                    <h3 class="drawing-label">Batch Size:</h3>
-                    <input type="number" min="0" step="0.01" name="batch_size" value={{session.train_params.batch_size}}>
-                </div>
-
-                <div class='row'>
-                    <h3 class="drawing-label">Epochs:</h3>
-                    <input type="number" min="0" name="epochs" value={{session.train_params.epochs}}>
-                </div>
-            </div>
+            <fieldset class="form-group">
+                {{ render_field(retrain_form.optimizer) }}
+                {{ render_field(retrain_form.learning_rate) }}
+                {{ render_field(retrain_form.beta1) }}
+                {{ render_field(retrain_form.beta2) }}
+                {{ render_field(retrain_form.batch_size) }}
+                {{ render_field(retrain_form.epochs) }}
+            </fieldset>
         </div>
         <input type='submit' value="Train Model" class='form-submit'>
     </form>
