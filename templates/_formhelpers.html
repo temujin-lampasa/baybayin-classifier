@@ -1,0 +1,13 @@
+{% macro render_field(field) %}
+
+<div class="form-group">
+{{ field.label(class="drawing-label") }}
+{% if field.x is defined %}
+    {{ field.x }}
+    {{ field.y }}
+{% else %}
+    {{ field }}
+{% endif %}
+</div>
+
+{% endmacro %}

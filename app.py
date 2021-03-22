@@ -7,6 +7,7 @@ import os
 
 from models import DEFAULT_CNN_PARAMS, DEFAULT_TRAIN_PARAMS, ALTERNATE_CNN_PARAMS, classify_uploaded_file, train_model
 
+from forms import CNNForm, RetrainModelForm
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -57,13 +58,17 @@ def about():
 def index():
     global FIRST_LAUNCH
     if FIRST_LAUNCH:
-        print('foobar')
+        # Clear display variables and reset CNN path when launching for the first time
         if session.get("classification"):
             del session["classification"]
         if session.get("probability"):
             del session["probability"]
         session['cnn_path'] = os.path.join(os.getcwd(), 'default.pt')
         FIRST_LAUNCH = False
+
+    # Forms
+    cnn_form = CNNForm()
+    retrain_form = RetrainModelForm()
 
     if not session.get('train_params'):
         session['train_params'] = DEFAULT_TRAIN_PARAMS
@@ -96,7 +101,9 @@ def index():
     # if not session.get('cnn_path'):
     #     session['cnn_path'] = os.path.join(os.getcwd(), 'default.pt')
 
-    return render_template("index.html")
+    return render_template("index.html",
+                           cnn_form=cnn_form,
+                           retrain_form=retrain_form)
 
 
 @app.route('/train', methods=['POST'])
@@ -104,7 +111,6 @@ def train():
     # Train here
     # print(request.form)
     # session['train_params'] = request.form
-    # train_model(session['train_params'])
     train_model(
         ALTERNATE_CNN_PARAMS,
         DEFAULT_TRAIN_PARAMS,
