@@ -15,8 +15,8 @@
 {% macro render_field_xy(field) %}
 <div class="form-group">
     {{ field.label(class="drawing-label") }}
-    {{ field.x }}
-    {{ field.y }}
+    x: {{ field.x }}
+    y: {{ field.y }}
 
     {% if field.errors %}
     <ul>
