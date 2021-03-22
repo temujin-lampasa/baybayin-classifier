@@ -1,18 +1,21 @@
 from flask import Flask, render_template, url_for, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 from torchvision import transforms
-
 from datetime import datetime
 import os
 
 from models import DEFAULT_CNN_PARAMS, DEFAULT_TRAIN_PARAMS, ALTERNATE_CNN_PARAMS, classify_uploaded_file, train_model
 
 from forms import CNNForm, RetrainModelForm
+from flask_wtf.csrf import CsrfProtect
 
 app = Flask(__name__)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = '\xd7\x15\xf4\x13k{\xb7b\xfe;D\n\xf3fa7\x9a\x0e\x87q\x0e\x1d\xabV'
+
+CsrfProtect(app)
 
 db = SQLAlchemy(app)
 
@@ -70,6 +73,12 @@ def index():
     cnn_form = CNNForm()
     retrain_form = RetrainModelForm()
 
+    if cnn_form.validate_on_submit():
+        return redirect("/")
+
+    if retrain_form.validate_on_submit():
+        return redirect("/")
+
     if not session.get('train_params'):
         session['train_params'] = DEFAULT_TRAIN_PARAMS
     
@@ -84,13 +93,6 @@ def index():
         db.session.add(new_user)
         db.session.commit()
         session['uid'] = new_user.id
-
-        # Each user has a unique directory
-        # Dir. name is user ID
-        # if not os.path.exists('users'):
-        #     os.mkdir('users')
-        # if not os.path.exists(f"users/{session['uid']}"):
-        #     os.mkdir(f"users/{session['uid']}")
 
     # temporary workaround to user folder
     if not os.path.exists(os.path.join(os.getcwd(), 'users')):

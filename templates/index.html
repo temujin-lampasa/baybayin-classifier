@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% from '_formhelpers.html' import render_field  %}
+{% from '_formhelpers.html' import render_field, render_field_xy  %}
 
 
 
@@ -57,15 +57,14 @@
     <div class="drawing-board">
         <h2>Convolutional Neural Networks</h2>
     </div>
-    
-        {{ cnn_form.csrf_token }}
         <div>
             <h3>What are Convolutional Layers?</h3>
         </div>
         <div>
             <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.”</p>
         </div>
-    <form method="POST" action="{{ url_for('cnn') }}">
+    <form method="POST" action="">
+        {{ cnn_form.csrf_token }}
         <div class='row'>
             <h3 class="drawing-label">Convolutions:</h3> 
             <button>1</button> 
@@ -75,11 +74,11 @@
         </div>
         <fieldset class="form-group">
             {{ render_field(cnn_form.filters) }}
-            {{ render_field(cnn_form.kernel) }}
-            {{ render_field(cnn_form.stride) }}
+            {{ render_field_xy(cnn_form.kernel) }}
+            {{ render_field_xy(cnn_form.stride) }}
             {{ render_field(cnn_form.conv_layer_on) }}
             {{ render_field(cnn_form.padding) }}
-            {{ render_field(cnn_form.pool_size) }}
+            {{ render_field_xy(cnn_form.pool_size) }}
             {{ render_field(cnn_form.batch_norm) }}
         </fieldset>
     
@@ -112,21 +111,20 @@
     <div class="drawing-board">
         <h2>Retrain Model</h2>
     </div>
-    <form method="POST" action="{{ url_for('train')}}">
+    <form method="POST" action="">
+        {{ retrain_form.csrf_token }}
         <div>
             <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.”</p>
         </div>
 
-        <div class="input-fields">
-            <fieldset class="form-group">
-                {{ render_field(retrain_form.optimizer) }}
-                {{ render_field(retrain_form.learning_rate) }}
-                {{ render_field(retrain_form.beta1) }}
-                {{ render_field(retrain_form.beta2) }}
-                {{ render_field(retrain_form.batch_size) }}
-                {{ render_field(retrain_form.epochs) }}
-            </fieldset>
-        </div>
+        <fieldset class="form-group">
+            {{ render_field(retrain_form.optimizer) }}
+            {{ render_field(retrain_form.learning_rate) }}
+            {{ render_field(retrain_form.beta1) }}
+            {{ render_field(retrain_form.beta2) }}
+            {{ render_field(retrain_form.batch_size) }}
+            {{ render_field(retrain_form.epochs) }}
+        </fieldset>
         <div id='loading' style='display:none'>
             <center>
                 <img src="{{ url_for('static', filename='images/loading.gif') }}", alt="Training"><br>

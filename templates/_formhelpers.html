@@ -1,13 +1,29 @@
 {% macro render_field(field) %}
-
 <div class="form-group">
 {{ field.label(class="drawing-label") }}
-{% if field.x is defined %}
-    {{ field.x }}
-    {{ field.y }}
-{% else %}
-    {{ field }}
-{% endif %}
+{{ field }}
 </div>
 
+{% if field.errors %}
+    {% for error in field.errors %}
+        {{error}}
+    {% endfor %}
+{% endif %}
+{% endmacro %}
+
+
+{% macro render_field_xy(field) %}
+<div class="form-group">
+    {{ field.label(class="drawing-label") }}
+    {{ field.x }}
+    {{ field.y }}
+
+    {% if field.errors %}
+    <ul>
+        {% for fieldname, error in field.errors.items() %}
+            <li> {{fieldname}}: {{error}} </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</div>
 {% endmacro %}
