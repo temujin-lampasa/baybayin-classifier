@@ -1,11 +1,11 @@
 from flask import Flask, render_template, url_for, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
+from torchvision import transforms
+
 from datetime import datetime
 import os
 
-from models import DEFAULT_CNN_PARAMS as BAYBAYIN_DEFAULT_CNN
-
-from models import baybayin_net, classify_uploaded_file
+from models import DEFAULT_CNN_PARAMS, DEFAULT_TRAIN_PARAMS, ALTERNATE_CNN_PARAMS, classify_uploaded_file, train_model
 
 
 app = Flask(__name__)
@@ -15,28 +15,29 @@ app.config['SECRET_KEY'] = '\xd7\x15\xf4\x13k{\xb7b\xfe;D\n\xf3fa7\x9a\x0e\x87q\
 
 db = SQLAlchemy(app)
 
-DEFAULT_TRAIN_PARAMS = {
-    'optimizer': 'SGD',
-    'learning_rate': 0.00,
-    'momentum': 0.00,
-    'beta1': 0.00,
-    'beta2': 0.00,
-    'batch_size': 32,    
-    'epochs': 1,
-}
-DEFAULT_CNN_PARAMS = {
-    'filters': 1,
-    'kernel_x': 1,
-    'kernel_y': 1,
-    'stride_x': 1,
-    'stride_y': 1,
-    'padding': "valid",
-    'pool_x':1,
-    'pool_y': 1,
-    'output_size': 1,
-    'dropout': 1.0,
-    'activation': "sigmoid",
- }
+FIRST_LAUNCH = True
+# DEFAULT_TRAIN_PARAMS = {
+#     'optimizer': 'SGD',
+#     'learning_rate': 0.00,
+#     'momentum': 0.00,
+#     'beta1': 0.00,
+#     'beta2': 0.00,
+#     'batch_size': 32,    
+#     'epochs': 1,
+# }
+# DEFAULT_CNN_PARAMS = {
+#     'filters': 1,
+#     'kernel_x': 1,
+#     'kernel_y': 1,
+#     'stride_x': 1,
+#     'stride_y': 1,
+#     'padding': "valid",
+#     'pool_x':1,
+#     'pool_y': 1,
+#     'output_size': 1,
+#     'dropout': 1.0,
+#     'activation': "sigmoid",
+#  }
 
 
 class User(db.Model):
@@ -51,8 +52,19 @@ class User(db.Model):
 def about():
     return render_template("about.html")
 
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    global FIRST_LAUNCH
+    if FIRST_LAUNCH:
+        print('foobar')
+        if session.get("classification"):
+            del session["classification"]
+        if session.get("probability"):
+            del session["probability"]
+        session['cnn_path'] = os.path.join(os.getcwd(), 'default.pt')
+        FIRST_LAUNCH = False
+
     if not session.get('train_params'):
         session['train_params'] = DEFAULT_TRAIN_PARAMS
     
@@ -70,10 +82,19 @@ def index():
 
         # Each user has a unique directory
         # Dir. name is user ID
-        if not os.path.exists('users'):
-            os.mkdir('users')
-        if not os.path.exists(f"users/{session['uid']}"):
-            os.mkdir(f"users/{session['uid']}")
+        # if not os.path.exists('users'):
+        #     os.mkdir('users')
+        # if not os.path.exists(f"users/{session['uid']}"):
+        #     os.mkdir(f"users/{session['uid']}")
+
+    # temporary workaround to user folder
+    if not os.path.exists(os.path.join(os.getcwd(), 'users')):
+        os.mkdir(os.path.join(os.getcwd(), 'users'))
+    if not os.path.exists(os.path.join(os.getcwd(), f"users/{session['uid']}")):
+        os.mkdir(os.path.join(os.getcwd(), f"users/{session['uid']}"))
+
+    # if not session.get('cnn_path'):
+    #     session['cnn_path'] = os.path.join(os.getcwd(), 'default.pt')
 
     return render_template("index.html")
 
@@ -81,8 +102,15 @@ def index():
 @app.route('/train', methods=['POST'])
 def train():
     # Train here
-    session['train_params'] = request.form
-    train_model(session['train_params'])
+    # print(request.form)
+    # session['train_params'] = request.form
+    # train_model(session['train_params'])
+    train_model(
+        ALTERNATE_CNN_PARAMS,
+        DEFAULT_TRAIN_PARAMS,
+        os.path.join(os.getcwd(), f"users/{session['uid']}/{session['uid']}.pt")
+        )
+    session['cnn_path'] = os.path.join(os.getcwd(), f"users/{session['uid']}/{session['uid']}.pt")
     return redirect('/')
 
 
@@ -96,10 +124,11 @@ def cnn():
 
 @app.route('/classify', methods=['POST'])
 def classify():
+    print(session['cnn_path'])
     # classify image here
     if request.files["drawing"]:
         drawing = request.files["drawing"]
-        classification, probability = classify_uploaded_file(drawing)
+        classification, probability = classify_uploaded_file(drawing, session['cnn_path'])
         session['classification'] = classification
         session['probability'] = f'{probability*100:.2f}'
     else:
@@ -113,9 +142,9 @@ def get_feature_maps(args):
     print("Getting feature maps...")
     print(args)
 
-def train_model(args):
-    print("Training...")
-    print(args)
+# def train_model(args):
+#     print("Training...")
+#     print(args)
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=8080, debug=True)

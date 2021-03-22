@@ -5,7 +5,7 @@ import os
 import dill
 from sklearn.model_selection import train_test_split
 from PIL import Image
-from tqdm import tqdm
+from progress.bar import Bar
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -48,6 +48,27 @@ DEFAULT_TRAIN_PARAMS = {
     'momentum' : 0.9
 }
 
+ALTERNATE_CNN_PARAMS = {
+'conv_layer_configs' : [
+                        {'filters' : 6,
+                        'kernel_size' : (7, 7),
+                        'stride' : (1, 1),
+                        'pool' : (2, 2),
+                        'padding' : 'valid'},
+                        {'filters' : 16,
+                        'kernel_size' : (5, 5),
+                        'stride' : (1, 1),
+                        'pool' : (2, 2),
+                        'padding' : 'valid'}
+                    ],
+'fc_layer_configs' : [
+                        {'size' : 128},
+                        {'size' : 64},
+                    ],
+'batch_norm' : False,
+'dropout' : 0.5,
+'activation_fn' : 'ReLU'
+}
 
 def same_pad_values(dim, kernel_size, stride=(1, 1)):
     total_h_pad = stride[0]*dim[0]-dim[0]+kernel_size[0]-stride[0]
@@ -202,7 +223,7 @@ def create_loaders(batch_size):
     return baybayin_trainloader, baybayin_testloader
 
 
-def train_model(save_path, cnn_args, train_args):
+def train_model(cnn_args, train_args, save_path):
 
     # initialize model
     model = baybayin_net(cnn_args)
@@ -219,10 +240,11 @@ def train_model(save_path, cnn_args, train_args):
 
     criterion = nn.CrossEntropyLoss() # initialize loss
 
+    bar = Bar('Training', max = train_args['epochs'] * len(baybayin_trainloader))
     for epoch in range(train_args['epochs']):  # loop over the dataset multiple times
 
         running_loss = 0
-        for i, data in tqdm(enumerate(baybayin_trainloader, 0), desc=f'Epoch {epoch}'):
+        for i, data in enumerate(baybayin_trainloader, 0):
             # get the inputs; data is a list of [inputs, labels]
             inputs, labels = data
 
@@ -240,13 +262,28 @@ def train_model(save_path, cnn_args, train_args):
             if i % 2000 == 1999:    # print every 2000 mini-batches
                 print(f'epoch {epoch:2d}\titer {i:5d}\trunning loss {running_loss/2000:.3f} %.3f')
                 running_loss = 0.0
-    torch.save(model.state_dict(), save_path)
+
+            bar.next()
+    torch.save(
+        {
+        'model' : model.state_dict(),
+        'cnn_params' : cnn_args,
+        'train_params' : train_args
+        },
+        save_path
+        )
+    bar.finish()
     print('Finished Training')
 
 
-def evaluate_model(load_path='default.pt', cnn_args, train_args):
+def evaluate_model(cnn_args, train_args, load_path='default.pt'):
+    model_and_params = torch.load(load_path)
+    if cnn_args is None:
+        cnn_args = model_and_params['cnn_params']
+    if train_args is None:
+        train_args = model_and_params['train_params']
     model = baybayin_net(cnn_args)
-    model.load_state_dict(torch.load(load_path))
+    model.load_state_dict(model_and_params['model'])
     print(model)
     _, baybayin_testloader = create_loaders(train_args['batch_size'])
     correct = 0
@@ -262,13 +299,17 @@ def evaluate_model(load_path='default.pt', cnn_args, train_args):
     print(f'Accuracy on {len(baybayin_testloader)}-image test set: {100*correct/total:.2f}%')
 
 
-def classify_uploaded_file(load_path='default.pt', uploaded_file):
+def classify_uploaded_file(uploaded_file, load_path='default.pt'):
     drawing = uploaded_file.read()
     drawing = pre_process_image(Image.open(io.BytesIO(drawing))).unsqueeze(0)
-    classifier = baybayin_net(DEFAULT_CNN_PARAMS)
-    classifier.load_state_dict(torch.load(load_path))
+    model_and_params = torch.load(load_path)
+    cnn_args = model_and_params['cnn_params']
+    classifier = baybayin_net(cnn_args)
+    classifier.load_state_dict(model_and_params['model'])
     print(classifier)
-    predictions = F.softmax(classifier(drawing), 1)
+    classifier.eval()
+    with torch.no_grad():
+        predictions = F.softmax(classifier(drawing), 1)
     probability, class_index = predictions.max(1)
     classification = classes[class_index.item()]
     probability = probability.item()
@@ -276,5 +317,5 @@ def classify_uploaded_file(load_path='default.pt', uploaded_file):
     print('Probability:', probability)
     return classification, probability
 
-# train_model('default.pt', DEFAULT_CNN_PARAMS, DEFAULT_TRAIN_PARAMS)
-# evaluate_model('default.pt', DEFAULT_CNN_PARAMS, DEFAULT_TRAIN_PARAMS)
+# train_model(DEFAULT_CNN_PARAMS, DEFAULT_TRAIN_PARAMS, 'default.pt')
+# evaluate_model(DEFAULT_CNN_PARAMS, DEFAULT_TRAIN_PARAMS, 'default.pt')

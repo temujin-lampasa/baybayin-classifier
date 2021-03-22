@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+
+
 {% block head %}
   <link rel="stylesheet" href="{{ url_for('static', filename='css/about.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
@@ -216,7 +218,13 @@
                 </div>
             </div>
         </div>
-        <input type='submit' value="Train Model" class='form-submit'>
+        <div id='loading' style='display:none'>
+            <center>
+                <img src="{{ url_for('static', filename='images/loading.gif') }}", alt="Training"><br>
+                Training
+            </center>
+        </div>
+        <input type='submit' value="Train Model"  action ='train' class='form-submit' onclick='document.getElementById("loading").style.display="block"'>
     </form>
 </div>
 {% endblock %}
