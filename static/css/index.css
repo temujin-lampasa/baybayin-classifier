@@ -179,3 +179,11 @@ input, button, select {
 #batch_norm {
   width: auto;
 }
+
+.cnn-section p {
+  margin-bottom: 24px;
+}
+
+#cnn-form-info {
+  margin-top: 32px;
+}
