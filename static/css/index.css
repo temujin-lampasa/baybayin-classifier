@@ -62,7 +62,7 @@ content: "";
 display: table;
 clear: both;
 }
-  
+
 .column {
 display: inline-block;
 width: 50%;
@@ -129,4 +129,30 @@ input, button, select {
 .input-fields button {
     height: 50px;
     width: 50px;
+}
+
+/*CNN Section*/
+
+.flex-wrap {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.cnn-section .form-group-container {
+  border: none;
+  padding: 0;
+}
+
+.cnn-section .form-group {
+  margin: 0 40px 24px 0;
+  display: flex;
+}
+
+.form-group-half {
+  width: 50%;
+  min-width: 310px;
+}
+
+#batch_norm {
+  width: auto;
 }
