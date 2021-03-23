@@ -69,16 +69,6 @@ def index():
         session['cnn_path'] = os.path.join(os.getcwd(), 'default.pt')
         FIRST_LAUNCH = False
 
-    # Forms
-    cnn_form = CNNForm()
-    retrain_form = RetrainModelForm()
-
-    if cnn_form.validate_on_submit():
-        return redirect("/")
-
-    if retrain_form.validate_on_submit():
-        return redirect("/")
-
     if not session.get('train_params'):
         session['train_params'] = DEFAULT_TRAIN_PARAMS
     
@@ -87,6 +77,41 @@ def index():
 
     if not session.get('cnn_params'):
         session['cnn_params'] = DEFAULT_CNN_PARAMS
+
+
+    # Forms ---------------
+    
+    cnn_form = CNNForm()
+    retrain_form = RetrainModelForm()
+
+    # Set default values
+    # Conv layers
+    conv = session['cnn_params']['conv_layer_configs'][0]
+    cnn_form.filters.data = conv['filters']
+
+    cnn_form.kernel.x.data = conv['kernel_size'][0]
+    cnn_form.kernel.y.data = conv['kernel_size'][1]
+    
+    cnn_form.stride.x.data = conv['stride'][0]
+    cnn_form.stride.y.data = conv['stride'][1]
+
+    cnn_form.pool_size.x.data = conv['pool'][0]
+    cnn_form.pool_size.y.data = conv['pool'][1]
+
+    cnn_form.padding.process_data(conv['padding'])
+
+    # FC layers
+    fc = session['cnn_params']['fc_layer_configs'][0]
+    print(fc)
+    cnn_form.output_size.data = fc['size']
+    cnn_form.dropout.data = fc['dropout']
+    
+    if cnn_form.validate_on_submit():
+        return redirect("/")
+
+    if retrain_form.validate_on_submit():
+        return redirect("/")
+    # ---------------------
 
     if not session.get('uid'):
         new_user = User()
