@@ -7,7 +7,7 @@ import os
 from models import DEFAULT_CNN_PARAMS, DEFAULT_TRAIN_PARAMS, ALTERNATE_CNN_PARAMS, classify_uploaded_file, train_model
 
 from forms import CNNForm, RetrainModelForm
-from flask_wtf.csrf import CsrfProtect
+from flask_wtf.csrf import CSRFProtect
 
 app = Flask(__name__)
 
