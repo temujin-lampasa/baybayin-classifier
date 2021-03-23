@@ -140,7 +140,7 @@
             <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.”</p>
         </div>
 
-        <div class = "flex-wrap">
+        <div class = "flex">
             <fieldset class="retrain-form retrain-form-group">
                 {{ render_field(retrain_form.optimizer) }}
                 {{ render_field(retrain_form.learning_rate) }}
@@ -150,8 +150,9 @@
                 {{ render_field(retrain_form.epochs) }}
             </fieldset>
 
-            <div>
-            <p>asdf</p>
+            <div id='instruction-div'>
+            <h3>Instructions:</h3>
+            <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.”</p>
             </div>
 
         </div>     
@@ -161,9 +162,9 @@
                 <img src="{{ url_for('static', filename='images/loading.gif') }}", alt="Training"><br>
                 Training
             </center>
-
-        <input type='submit' value="Train Model"  action ='train' class='form-submit' onclick='document.getElementById("loading").style.display="block"'>
         </div>
+
+        <input type='submit' value="Train Model"  action ='train' class="form-submit" onclick='document.getElementById("loading").style.display="block"'>
 
     </form>
 </div>

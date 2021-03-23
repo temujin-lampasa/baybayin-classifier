@@ -115,6 +115,7 @@ h3 {
     font-size: 24px;
     color: #fff;
     font-family: 'Mulish', sans-serif;
+    font-weight: bold;
 }
 
 input#drawing {
@@ -195,11 +196,10 @@ input, button, select {
 
 /* Retrain Section */
 
-.retrain-section input, .retrain-section button, .retrain-section select {
+.retrain-section input .retrain-section button, .retrain-section select {
     font-size: 24px;
     font-family: 'Mulish', sans-serif;
     height: 48px;
-    margin: 0 40px 24px 0;
     min-width: 48px;
 }
 
@@ -216,6 +216,18 @@ input, button, select {
   }
 
 .retrain-section select{
-    width:fit-content;
-    padding:0 0 0 8px;
+    width: fit-content;
+    padding: 0 0 0 8px;
+}
+
+#retrain-form-info{
+    margin-bottom: 24px;
+}
+
+#instruction-div{
+    width: 50%;
+}
+
+.flex{
+    display: flex;
 }
