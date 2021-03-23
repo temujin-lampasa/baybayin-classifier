@@ -85,28 +85,33 @@ def index():
     retrain_form = RetrainModelForm()
 
     # Set default values
+
+    # Temporary fix.
+    # Improve later by using data param in form constructor.
+
     # Conv layers
-    conv = session['cnn_params']['conv_layer_configs'][0]
-    cnn_form.filters.data = conv['filters']
+    if request.method == "GET":
+        conv = session['cnn_params']['conv_layer_configs'][0]
+        cnn_form.filters.data = conv['filters']
 
-    cnn_form.kernel.x.data = conv['kernel_size'][0]
-    cnn_form.kernel.y.data = conv['kernel_size'][1]
-    
-    cnn_form.stride.x.data = conv['stride'][0]
-    cnn_form.stride.y.data = conv['stride'][1]
+        cnn_form.kernel.x.data = conv['kernel_size'][0]
+        cnn_form.kernel.y.data = conv['kernel_size'][1]
+        
+        cnn_form.stride.x.data = conv['stride'][0]
+        cnn_form.stride.y.data = conv['stride'][1]
 
-    cnn_form.pool_size.x.data = conv['pool'][0]
-    cnn_form.pool_size.y.data = conv['pool'][1]
+        cnn_form.pool_size.x.data = conv['pool'][0]
+        cnn_form.pool_size.y.data = conv['pool'][1]
 
-    cnn_form.padding.process_data(conv['padding'])
+        cnn_form.padding.process_data(conv['padding'])
 
-    # FC layers
-    fc = session['cnn_params']['fc_layer_configs'][0]
-    print(fc)
-    cnn_form.output_size.data = fc['size']
-    cnn_form.dropout.data = fc['dropout']
-    
+        # FC layers
+        fc = session['cnn_params']['fc_layer_configs'][0]
+        cnn_form.output_size.data = fc['size']
+        cnn_form.dropout.data = fc['dropout']
+        
     if cnn_form.validate_on_submit():
+        print(cnn_form.filters.data)
         return redirect("/")
 
     if retrain_form.validate_on_submit():
