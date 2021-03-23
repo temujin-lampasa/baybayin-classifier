@@ -192,3 +192,30 @@ input, button, select {
   font-size: 24px;
   font-weight: bold;
 }
+
+/* Retrain Section */
+
+.retrain-section input, .retrain-section button, .retrain-section select {
+    font-size: 24px;
+    font-family: 'Mulish', sans-serif;
+    height: 48px;
+    margin: 0 40px 24px 0;
+    min-width: 48px;
+}
+
+.retrain-section .retrain-form{
+    border: none;
+    padding: 0;
+    margin: 0 40px 24px 0;
+}
+
+.retrain-section label {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0 8px 24px 0;
+  }
+
+.retrain-section select{
+    width:fit-content;
+    padding:0 0 0 8px;
+}
