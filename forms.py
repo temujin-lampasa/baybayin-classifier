@@ -27,7 +27,7 @@ class CNNForm(FlaskForm):
     output_size = IntegerField('Output Size', validators=[InputRequired()])
     dropout = DecimalField('Dropout', places=1, widget=NumberInput(step=0.1), validators=[InputRequired()])
     activation = SelectField('Activation Function', choices=['sigmoid', 'tanh', 'ReLu'], validators=[InputRequired()])
-    dense_layer_on = BooleanField('On')
+    fc_layer_on = BooleanField('On')
 
 
 class RetrainModelForm(FlaskForm):
