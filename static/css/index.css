@@ -187,3 +187,8 @@ input, button, select {
 #cnn-form-info {
   margin-top: 32px;
 }
+
+.cnn-section .form-submit {
+  font-size: 24px;
+  font-weight: bold;
+}
