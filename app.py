@@ -80,38 +80,25 @@ def index():
 
 
     # Forms ---------------
-    
-    cnn_form = CNNForm()
-    retrain_form = RetrainModelForm()
 
     # Set default values
+    # Todo: refactor this
+    conv = session['cnn_params']['conv_layer_configs'][0]
+    fc = session['cnn_params']['fc_layer_configs'][0]
+    cnn_defaults = {
+        'filters': conv['filters'],
+        'kernel': {'x': conv['kernel_size'][0], 'y': conv['kernel_size'][1]},
+        'stride': {'x': conv['stride'][0], 'y': conv['stride'][1]},
+        'pool_size': {'x': conv['pool'][0], 'y': conv['pool'][1]},
+        'padding': conv['padding'],
+        'output_size': fc['size'],
+        'dropout': fc['dropout'],
+    }
+    
+    cnn_form = CNNForm(data=cnn_defaults)
+    retrain_form = RetrainModelForm()
 
-    # Temporary fix.
-    # Improve later by using data param in form constructor.
-
-    # Conv layers
-    if request.method == "GET":
-        conv = session['cnn_params']['conv_layer_configs'][0]
-        cnn_form.filters.data = conv['filters']
-
-        cnn_form.kernel.x.data = conv['kernel_size'][0]
-        cnn_form.kernel.y.data = conv['kernel_size'][1]
-        
-        cnn_form.stride.x.data = conv['stride'][0]
-        cnn_form.stride.y.data = conv['stride'][1]
-
-        cnn_form.pool_size.x.data = conv['pool'][0]
-        cnn_form.pool_size.y.data = conv['pool'][1]
-
-        cnn_form.padding.process_data(conv['padding'])
-
-        # FC layers
-        fc = session['cnn_params']['fc_layer_configs'][0]
-        cnn_form.output_size.data = fc['size']
-        cnn_form.dropout.data = fc['dropout']
-        
     if cnn_form.validate_on_submit():
-        print(cnn_form.filters.data)
         return redirect("/")
 
     if retrain_form.validate_on_submit():
