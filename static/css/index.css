@@ -133,6 +133,23 @@ input, button, select {
 
 /*CNN Section*/
 
+.cnn-section input, .cnn-section button, .cnn-section select {
+    font-size: 24px;
+    font-family: 'Mulish', sans-serif;
+    height: 48px;
+    margin: 0 8px 0 0;
+    min-width: 48px;
+}
+
+.cnn-section input, .cnn-section select {
+    padding: 0 0 0 8px;
+
+}
+
+.cnn-section select {
+  width: fit-content;
+}
+
 .flex-wrap {
   display: flex;
   flex-wrap: wrap;
@@ -151,6 +168,12 @@ input, button, select {
 .form-group-half {
   width: 50%;
   min-width: 310px;
+}
+
+.cnn-section label {
+  font-size: 24px;
+  font-weight: bold;
+  margin-right: 10px;
 }
 
 #batch_norm {
