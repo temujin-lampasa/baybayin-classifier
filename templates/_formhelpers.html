@@ -4,11 +4,13 @@
 {{ field }}
 </div>
 
+<div class="error">
 {% if field.errors %}
     {% for error in field.errors %}
         {{error}}
     {% endfor %}
 {% endif %}
+</div>
 {% endmacro %}
 
 
@@ -26,4 +28,20 @@
     </ul>
     {% endif %}
 </div>
+{% endmacro %}
+
+{% macro render_fieldlist_cnn(fieldlist) %}
+{% for field in fieldlist %}
+<div class="cnn-layer{{loop.index}}">
+    {{render_field(field)}}
+</div>
+{% endfor %}
+{% endmacro %}
+
+{% macro render_fieldlist_cnn_xy(fieldlist)%}
+{% for field in fieldlist %}
+<div class="cnn-layer{{loop.index}}">
+    {{render_field_xy(field)}}
+</div>
+{% endfor %}
 {% endmacro %}

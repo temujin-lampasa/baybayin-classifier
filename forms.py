@@ -10,24 +10,38 @@ from wtforms import (
     BooleanField
 )
 
+NUM_LAYERS = 4
+
 class XY_Form(FlaskForm):
     x = IntegerField('x', validators=[InputRequired(), NumberRange(min=0, max=10)])
     y = IntegerField('y', validators=[InputRequired(), NumberRange(min=0, max=10, message="error")])
 
 class CNNForm(FlaskForm):
-    filters = IntegerField('Filters', validators=[InputRequired(), NumberRange(0, 10)])
-    kernel = FormField(XY_Form)
-    stride = FormField(XY_Form)
+    filters = FieldList(
+        IntegerField('Filters', validators=[InputRequired(), NumberRange(0, 10)]),
+        min_entries=NUM_LAYERS
+        )
+
+    kernel = FieldList(FormField(XY_Form), min_entries=NUM_LAYERS)
+
+    stride = FieldList(FormField(XY_Form), min_entries=NUM_LAYERS)
 
     conv_layer_on = BooleanField('On')
-    padding = SelectField('Padding', choices=["same", "valid"], validators=[InputRequired()])
-    pool_size = FormField(XY_Form)
+    
+    padding = FieldList(
+        SelectField('Padding', choices=["same", "valid"], validators=[InputRequired()]),
+        min_entries=NUM_LAYERS
+    )
+
+    pool_size = FieldList(FormField(XY_Form), min_entries=NUM_LAYERS)
     batch_norm = BooleanField('Batch Norm')
 
-    output_size = IntegerField('Output Size', validators=[InputRequired()])
-    dropout = DecimalField('Dropout', places=1, widget=NumberInput(step=0.1), validators=[InputRequired()])
-    activation = SelectField('Activation Function', choices=['sigmoid', 'tanh', 'ReLu'], validators=[InputRequired()])
+    output_size = FieldList(IntegerField('Output Size', validators=[InputRequired()]), min_entries=NUM_LAYERS)
+    dropout = FieldList(DecimalField('Dropout', places=1, widget=NumberInput(step=0.1), validators=[InputRequired()]), min_entries=NUM_LAYERS)
+    activation = FieldList(SelectField('Activation Function', choices=['sigmoid', 'tanh', 'ReLu'], validators=[InputRequired()]), min_entries=NUM_LAYERS)
     fc_layer_on = BooleanField('On')
+
+    
 
 
 class RetrainModelForm(FlaskForm):

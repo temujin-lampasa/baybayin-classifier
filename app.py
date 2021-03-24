@@ -76,9 +76,11 @@ def index():
         session['cnn_path'] = os.path.join(os.getcwd(), 'default.pt')
 
         # Create folder for feature maps when launching for the first time
+        session['feature_maps_path'] = 'static/feature_maps/0'
         if not os.path.exists('static/feature_maps/0'):
             Path('static/feature_maps/0').mkdir(parents=True, exist_ok=True)
             session['feature_maps_path'] = 'static/feature_maps/0'
+    
         if not session.get('feature_maps'):
             session['feature_maps'] = os.listdir(session['feature_maps_path'])
         FIRST_LAUNCH = False
@@ -109,7 +111,7 @@ def index():
         'dropout': fc['dropout'],
     }
     
-    cnn_form = CNNForm(data=cnn_defaults)
+    cnn_form = CNNForm()
     retrain_form = RetrainModelForm()
 
     if cnn_form.validate_on_submit():
