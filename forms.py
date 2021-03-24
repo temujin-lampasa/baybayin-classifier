@@ -1,6 +1,7 @@
+from wtforms import widgets
 from wtforms.widgets.html5 import NumberInput
 from wtforms.fields.html5 import IntegerField, DecimalField
-from wtforms.fields import FieldList, FormField, SelectField
+from wtforms.fields import FieldList, FormField, SelectField, SelectMultipleField
 from flask_wtf import FlaskForm
 from wtforms.validators import InputRequired, NumberRange
 
@@ -12,9 +13,16 @@ from wtforms import (
 
 NUM_LAYERS = 4
 
+
 class XY_Form(FlaskForm):
     x = IntegerField('x', validators=[InputRequired(), NumberRange(min=0, max=10)])
     y = IntegerField('y', validators=[InputRequired(), NumberRange(min=0, max=10, message="error")])
+
+
+class MultiCheckboxField(SelectMultipleField):
+    widget = widgets.ListWidget(prefix_label=False)
+    option_widget = widgets.CheckboxInput()
+
 
 class CNNForm(FlaskForm):
     filters = FieldList(
@@ -26,8 +34,8 @@ class CNNForm(FlaskForm):
 
     stride = FieldList(FormField(XY_Form), min_entries=NUM_LAYERS)
 
-    conv_layer_on = BooleanField('On')
-    
+    conv_layer_on = MultiCheckboxField(choices=[(i, i) for i in range(4)])
+
     padding = FieldList(
         SelectField('Padding', choices=["same", "valid"], validators=[InputRequired()]),
         min_entries=NUM_LAYERS
@@ -40,8 +48,6 @@ class CNNForm(FlaskForm):
     dropout = FieldList(DecimalField('Dropout', places=1, widget=NumberInput(step=0.1), validators=[InputRequired()]), min_entries=NUM_LAYERS)
     activation = FieldList(SelectField('Activation Function', choices=['sigmoid', 'tanh', 'ReLu'], validators=[InputRequired()]), min_entries=NUM_LAYERS)
     fc_layer_on = BooleanField('On')
-
-    
 
 
 class RetrainModelForm(FlaskForm):
