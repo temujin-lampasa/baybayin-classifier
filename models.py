@@ -1,11 +1,13 @@
-from math import floor, ceil
 import io
+from math import floor, ceil
 import os
+from random import choice
 
 import dill
 from sklearn.model_selection import train_test_split
 from PIL import Image
 from progress.bar import Bar
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -84,17 +86,24 @@ def find_new_dim(dim, kernel_size, stride=(1, 1), pad=(0, 0, 0, 0)):
     return (floor((dim[0]+sum(pad[:2])-(kernel_size[0]-1)-1)/stride[0]+1),
           floor((dim[1]+sum(pad[2:])-(kernel_size[1]-1)-1)/stride[1]+1))
 
+def get_activation_function(activation_function_string):
+    if activation_function_string == 'Sigmoid':
+        return nn.Sigmoid()
+    elif activation_function_string == 'Tanh':
+        return nn.Tanh()
+    elif activation_function_string == 'ReLU':
+        return nn.ReLU()
 
 class baybayin_net(nn.Module):
     def __init__(self, args):
         super(baybayin_net, self).__init__()
 
-        if args['activation_fn'] == 'Sigmoid':
-                activation_fn = nn.Sigmoid()
-        elif args['activation_fn'] == 'Tanh':
-            activation_fn = nn.Tanh()
-        elif args['activation_fn'] == 'ReLU':
-            activation_fn = nn.ReLU()
+        # if args['activation_fn'] == 'Sigmoid':
+                # activation_fn = nn.Sigmoid()
+        # elif args['activation_fn'] == 'Tanh':
+            # activation_fn = nn.Tanh()
+        # elif args['activation_fn'] == 'ReLU':
+            # activation_fn = nn.ReLU()
         
         self.conv_layers = []
         dim = (32, 32)
@@ -119,7 +128,10 @@ class baybayin_net(nn.Module):
                 )
             )
 
-            self.conv_layers.append(activation_fn)
+            # self.conv_layers.append(activation_fn)
+            self.conv_layers.append(
+                get_activation_function(args['activation_fn'])
+            )
 
             if args['batch_norm']:
                 self.conv_layers.append(nn.BatchNorm2d(conv_layer['filters']))
@@ -138,21 +150,32 @@ class baybayin_net(nn.Module):
                     fc_layer_config['size']
                 )
             )
-            self.fc_layers.append(activation_fn)
+            # self.fc_layers.append(activation_fn)
+            self.fc_layers.append(
+                get_activation_function(args['activation_fn'])
+            )
             self.fc_layers.append(nn.Dropout(args['dropout']))
         self.fc_layers.append(
             nn.Linear(args['fc_layer_configs'][-1]['size'], 19)
             )
         self.fc_layers = nn.ModuleList(self.fc_layers)
   
-    def forward(self, x):
+    def forward(self, x, return_feature_maps=False):
+        feature_maps = []
         b = x.shape[0]
         for layer in self.conv_layers:
             x = layer(x)
+            if return_feature_maps:
+                feature_maps.append(x)
         x = x.view(b, -1)
         for layer in self.fc_layers:
             x = layer(x)
-        return x
+            if return_feature_maps:
+                feature_maps.append(x)
+        if return_feature_maps:
+            return x, feature_maps
+        else:
+            return x
 
 
 def pre_process_image(image):
@@ -304,12 +327,13 @@ def classify_uploaded_file(uploaded_file, load_path='default.pt'):
     drawing = pre_process_image(Image.open(io.BytesIO(drawing))).unsqueeze(0)
     model_and_params = torch.load(load_path)
     cnn_args = model_and_params['cnn_params']
-    classifier = baybayin_net(cnn_args)
-    classifier.load_state_dict(model_and_params['model'])
-    print(classifier)
-    classifier.eval()
+    model = baybayin_net(cnn_args)
+    model_weights = model_and_params['model']
+    model.load_state_dict(model_weights)
+    print(model)
+    model.eval()
     with torch.no_grad():
-        predictions = F.softmax(classifier(drawing), 1)
+        predictions = F.softmax(model(drawing), 1)
     probability, class_index = predictions.max(1)
     classification = classes[class_index.item()]
     probability = probability.item()
@@ -317,5 +341,57 @@ def classify_uploaded_file(uploaded_file, load_path='default.pt'):
     print('Probability:', probability)
     return classification, probability
 
+def generate_feature_maps(save_path, load_path):
+    if not os.path.isdir(save_path):
+        os.mkdir(save_path)
+    model_and_params = torch.load(load_path)
+    cnn_args = model_and_params['cnn_params']
+    train_args = model_and_params['train_params']
+    model_weights = model_and_params['model']
+    model = baybayin_net(cnn_args)
+    model.load_state_dict(model_weights)
+    print(model)
+    dataset_path = './Baybayin-Handwritten-Character-Dataset/raw'
+    random_class_path = os.path.join(dataset_path, choice(os.listdir(dataset_path)))
+    random_image_path = os.path.join(random_class_path, choice(os.listdir(random_class_path)))
+    print(random_image_path)
+    image = Image.open(random_image_path)
+    image = pre_process_image(image).unsqueeze(0)
+    _, feature_maps = model(image, True)
+    module_names = [str(module) for module in model.modules() if len(str(module).splitlines())==1]
+    for i, module_name_and_layer in enumerate(zip(module_names, feature_maps)):
+        module_name, layer = module_name_and_layer
+        if len(layer.shape) > 2:
+            layer = layer[0, :]
+            # print(layer.shape)
+            for j, feature_map in enumerate(layer):
+                # print(feature_map.shape)
+                feature_map = feature_map - feature_map.min()
+                feature_map = feature_map / feature_map.max()
+                feature_map = feature_map * 255
+                Image.fromarray(
+                    feature_map.detach().numpy().astype(np.uint8)
+                ).save(
+                    os.path.join(
+                        save_path,
+                        f'{str(i).zfill(2)}--{module_name}--{str(j).zfill(2)}.png'
+                    )
+                )
+        else:
+            # print(layer.shape)
+            layer = layer - layer.min()
+            layer = layer / layer.max()
+            layer = layer * 255
+            Image.fromarray(
+                layer.detach().numpy().astype(np.uint8)
+            ).save(
+                os.path.join(
+                    save_path,
+                    f'{str(i).zfill(2)}--{module_name}.png'
+                )
+            )
+    return sorted(os.listdir(save_path))
+    
 # train_model(DEFAULT_CNN_PARAMS, DEFAULT_TRAIN_PARAMS, 'default.pt')
 # evaluate_model(DEFAULT_CNN_PARAMS, DEFAULT_TRAIN_PARAMS, 'default.pt')
+# generate_feature_maps('feature_maps', 'default.pt')

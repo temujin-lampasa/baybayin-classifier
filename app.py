@@ -4,8 +4,10 @@ from torchvision import transforms
 
 from datetime import datetime
 import os
+from pathlib import Path
+import shutil
 
-from models import DEFAULT_CNN_PARAMS, DEFAULT_TRAIN_PARAMS, ALTERNATE_CNN_PARAMS, classify_uploaded_file, train_model
+from models import DEFAULT_CNN_PARAMS, DEFAULT_TRAIN_PARAMS, ALTERNATE_CNN_PARAMS, classify_uploaded_file, train_model, generate_feature_maps
 
 from forms import CNNForm, RetrainModelForm
 
@@ -59,11 +61,23 @@ def index():
     global FIRST_LAUNCH
     if FIRST_LAUNCH:
         # Clear display variables and reset CNN path when launching for the first time
-        if session.get("classification"):
-            del session["classification"]
-        if session.get("probability"):
-            del session["probability"]
+        if session.get('classification'):
+            del session['classification']
+
+        if session.get('probability'):
+            del session['probability']
+
+        if session.get('feature_maps'):
+            del session['feature_maps']
+
         session['cnn_path'] = os.path.join(os.getcwd(), 'default.pt')
+
+        # Create folder for feature maps when launching for the first time
+        if not os.path.exists('static/feature_maps/0'):
+            Path('static/feature_maps/0').mkdir(parents=True, exist_ok=True)
+            session['feature_maps_path'] = 'static/feature_maps/0'
+        if not session.get('feature_maps'):
+            session['feature_maps'] = os.listdir(session['feature_maps_path'])
         FIRST_LAUNCH = False
 
     # Forms
@@ -95,11 +109,9 @@ def index():
     # temporary workaround to user folder
     if not os.path.exists(os.path.join(os.getcwd(), 'users')):
         os.mkdir(os.path.join(os.getcwd(), 'users'))
+
     if not os.path.exists(os.path.join(os.getcwd(), f"users/{session['uid']}")):
         os.mkdir(os.path.join(os.getcwd(), f"users/{session['uid']}"))
-
-    # if not session.get('cnn_path'):
-    #     session['cnn_path'] = os.path.join(os.getcwd(), 'default.pt')
 
     return render_template("index.html",
                            cnn_form=cnn_form,
@@ -109,8 +121,9 @@ def index():
 @app.route('/train', methods=['POST'])
 def train():
     # Train here
-    # print(request.form)
     # session['train_params'] = request.form
+
+    # retrain mode with alternate hyperparameters
     train_model(
         ALTERNATE_CNN_PARAMS,
         DEFAULT_TRAIN_PARAMS,
@@ -123,8 +136,25 @@ def train():
 @app.route('/cnn', methods=['POST'])
 def cnn():
     # run CNN here
-    session['cnn_params'] = request.form
-    get_feature_maps(session['cnn_params'])
+
+    # use the current CNN
+    print(session['cnn_path'])
+
+    # create a new folder to address caching issues
+    if os.listdir(session['feature_maps_path']):
+        shutil.rmtree(session['feature_maps_path'])
+        split_path = os.path.split(session['feature_maps_path'])
+        session['feature_maps_path'] = f'{split_path[0]}/{int(split_path[-1])+1}'
+        print(session['feature_maps_path'])
+        if not os.path.isdir(session['feature_maps_path']):
+            Path(session['feature_maps_path']).mkdir(parents=True, exist_ok=True)
+    
+    # use a path for saving feature maps
+    print(session['feature_maps_path'])
+
+    # generate and save feature maps
+    session['feature_maps'] = generate_feature_maps(session['feature_maps_path'], session['cnn_path'])
+    session['feature_maps'] = [os.path.join(session['feature_maps_path'], filepath) for filepath in session['feature_maps']]
     return redirect('/')
 
 
@@ -138,15 +168,18 @@ def classify():
         session['classification'] = classification
         session['probability'] = f'{probability*100:.2f}'
     else:
+        # clear classification and probability if no file uploaded
         if session.get("classification"):
             del session["classification"]
         if session.get("probability"):
             del session["probability"]
     return redirect('/')
 
-def get_feature_maps(args):
-    print("Getting feature maps...")
-    print(args)
+# def get_feature_maps(args):
+    # print("Getting feature maps...")
+    # print(args)
+    # print(session['cnn_path'])
+    # generate_feature_maps(None, session['cnn_path'])
 
 # def train_model(args):
 #     print("Training...")
