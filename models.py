@@ -33,11 +33,13 @@ DEFAULT_CNN_PARAMS = {
                         'padding' : 'valid'}
                     ],
 'fc_layer_configs' : [
-                        {'size' : 120},
-                        {'size' : 84},
+                        {'size' : 120,
+                        'dropout' : 0.0},
+                        {'size' : 84,
+                        'dropout' : 0.0},
                     ],
 'batch_norm' : False,
-'dropout' : 0.0,
+
 'activation_fn' : 'ReLU'
 }
 
