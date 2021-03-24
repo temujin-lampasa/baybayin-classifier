@@ -20,10 +20,7 @@ for (let i=0; i< NUM_LAYERS; i++){
 
         // Make the layer i visible. Make all other layers invisible.
         for (let j=0; j<NUM_LAYERS; j++) {
-            let display = ""
-            if (j!=i) {
-                display = "none"
-            }
+            let display = (j!=i) ? "none": ""
             for (let elem of layers[j]) {
                 elem.style.display = display;
             }
