@@ -62,7 +62,7 @@ content: "";
 display: table;
 clear: both;
 }
-  
+
 .column {
 display: inline-block;
 width: 50%;
@@ -115,6 +115,7 @@ h3 {
     font-size: 24px;
     color: #fff;
     font-family: 'Mulish', sans-serif;
+    font-weight: bold;
 }
 
 input#drawing {
@@ -129,4 +130,104 @@ input, button, select {
 .input-fields button {
     height: 50px;
     width: 50px;
+}
+
+/*CNN Section*/
+
+.cnn-section input, .cnn-section button, .cnn-section select {
+    font-size: 24px;
+    font-family: 'Mulish', sans-serif;
+    height: 48px;
+    margin: 0 8px 0 0;
+    min-width: 48px;
+}
+
+.cnn-section input, .cnn-section select {
+    padding: 0 0 0 8px;
+
+}
+
+.cnn-section select {
+  width: fit-content;
+}
+
+.flex-wrap {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.cnn-section .form-group-container {
+  border: none;
+  padding: 0;
+}
+
+.cnn-section .form-group {
+  margin: 0 40px 24px 0;
+  display: flex;
+}
+
+.form-group-half {
+  width: 50%;
+  min-width: 310px;
+}
+
+.cnn-section label {
+  font-size: 24px;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+#batch_norm {
+  width: auto;
+}
+
+.cnn-section p {
+  margin-bottom: 24px;
+}
+
+#cnn-form-info {
+  margin-top: 32px;
+}
+
+.cnn-section .form-submit {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* Retrain Section */
+
+.retrain-section input .retrain-section button, .retrain-section select {
+    font-size: 24px;
+    font-family: 'Mulish', sans-serif;
+    height: 48px;
+    min-width: 48px;
+}
+
+.retrain-section .retrain-form{
+    border: none;
+    padding: 0;
+    margin: 0 40px 24px 0;
+}
+
+.retrain-section label {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0 8px 24px 0;
+  }
+
+.retrain-section select{
+    width: fit-content;
+    padding: 0 0 0 8px;
+}
+
+#retrain-form-info{
+    margin-bottom: 24px;
+}
+
+#instruction-div{
+    width: 50%;
+}
+
+.flex{
+    display: flex;
 }

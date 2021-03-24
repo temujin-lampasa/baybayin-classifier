@@ -391,7 +391,3 @@ def generate_feature_maps(save_path, load_path):
                 )
             )
     return sorted(os.listdir(save_path))
-    
-# train_model(DEFAULT_CNN_PARAMS, DEFAULT_TRAIN_PARAMS, 'default.pt')
-# evaluate_model(DEFAULT_CNN_PARAMS, DEFAULT_TRAIN_PARAMS, 'default.pt')
-# generate_feature_maps('feature_maps', 'default.pt')
