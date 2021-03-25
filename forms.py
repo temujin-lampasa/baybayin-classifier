@@ -30,24 +30,23 @@ class CNNForm(FlaskForm):
         min_entries=NUM_LAYERS
         )
 
-    kernel = FieldList(FormField(XY_Form), min_entries=NUM_LAYERS)
+    kernel = FieldList(FormField(XY_Form, label="Kernel"), min_entries=NUM_LAYERS)
+    stride = FieldList(FormField(XY_Form, label="Stride"), min_entries=NUM_LAYERS)
 
-    stride = FieldList(FormField(XY_Form), min_entries=NUM_LAYERS)
-
-    conv_layer_on = MultiCheckboxField(label="On", choices=[(i, f"On-{i}") for i in range(NUM_LAYERS)])
+    conv_layer_on = MultiCheckboxField(label="On", choices=[(i, "On") for i in range(NUM_LAYERS)])
 
     padding = FieldList(
         SelectField('Padding', choices=["same", "valid"], validators=[InputRequired()]),
         min_entries=NUM_LAYERS
     )
 
-    pool_size = FieldList(FormField(XY_Form), min_entries=NUM_LAYERS)
-    batch_norm = MultiCheckboxField(choices=[(i, f"Batch Norm-{i}") for i in range(4)])
+    pool_size = FieldList(FormField(XY_Form, label="Pool Size"), min_entries=NUM_LAYERS)
+    batch_norm = MultiCheckboxField(choices=[(i, "Batch Norm") for i in range(4)])
 
     output_size = FieldList(IntegerField('Output Size', validators=[InputRequired()]), min_entries=NUM_LAYERS)
     dropout = FieldList(DecimalField('Dropout', places=1, widget=NumberInput(step=0.1), validators=[InputRequired()]), min_entries=NUM_LAYERS)
     activation = FieldList(SelectField('Activation Function', choices=['sigmoid', 'tanh', 'ReLu'], validators=[InputRequired()]), min_entries=NUM_LAYERS)
-    fc_layer_on = MultiCheckboxField(label="On", choices=[(i, f"On-{i}") for i in range(NUM_LAYERS)])
+    fc_layer_on = MultiCheckboxField(label="On", choices=[(i, "On") for i in range(NUM_LAYERS)])
 
 
 class RetrainModelForm(FlaskForm):
