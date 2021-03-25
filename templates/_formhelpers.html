@@ -1,6 +1,6 @@
 {% macro render_field(field) %}
 <div class="form-group">
-{{ field.label(class="drawing-label") }}
+{{ field.label(class="green-label") }}
 {{ field }}
 </div>
 
@@ -16,7 +16,7 @@
 
 {% macro render_field_xy(field) %}
 <div class="form-group">
-    {{ field.label(class="drawing-label") }}
+    {{ field.label(class="green-label") }}
     x: {{ field.x }}
     y: {{ field.y }}
 
