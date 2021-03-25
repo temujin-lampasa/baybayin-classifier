@@ -34,3 +34,8 @@ function setBtnOnClick(buttons, layers) {
 
 setBtnOnClick(conv_buttons, conv_layers);
 setBtnOnClick(fc_buttons, fc_layers);
+
+
+// Set first buttons clicked by default
+conv_buttons[0].click();
+fc_buttons[0].click();
