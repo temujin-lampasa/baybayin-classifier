@@ -5,7 +5,7 @@ const NUM_LAYERS = 4;
 layers = [];
 
 for (let i=1; i<=NUM_LAYERS; i++) {
-    layers.push(document.getElementsByClassName("cnn-layer"+i))
+    layers.push(document.getElementsByClassName("conv-layer"+i))
 }
 
 

@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% from '_formhelpers.html' import render_field, render_fieldlist_cnn, render_fieldlist_cnn_xy, render_field_xy  %}
+{% from '_formhelpers.html' import render_field, render_fieldlist_conv, render_fieldlist_conv_xy, render_field_xy  %}
 
 
 
@@ -76,21 +76,21 @@
             </div>
 
             <fieldset class="form-group-container">
-                {{render_fieldlist_cnn(cnn_form.conv_layer_on)}}
+                {{render_fieldlist_conv(cnn_form.conv_layer_on)}}
             </fieldset>
         </div>
 
         <fieldset class="form-group-container flex-wrap">
             <div class="form-group-half">
-                {{render_fieldlist_cnn(cnn_form.filters)}}
-                {{render_fieldlist_cnn_xy(cnn_form.kernel)}}
-                {{render_fieldlist_cnn_xy(cnn_form.stride)}}
+                {{render_fieldlist_conv(cnn_form.filters)}}
+                {{render_fieldlist_conv_xy(cnn_form.kernel)}}
+                {{render_fieldlist_conv_xy(cnn_form.stride)}}
             </div>
 
             <div class="form-group-half">
-                {{render_fieldlist_cnn(cnn_form.padding)}}
-                {{render_fieldlist_cnn_xy(cnn_form.pool_size)}}
-                {{ render_field(cnn_form.batch_norm) }}
+                {{render_fieldlist_conv(cnn_form.padding)}}
+                {{render_fieldlist_conv_xy(cnn_form.pool_size)}}
+                {{ render_fieldlist_conv(cnn_form.batch_norm)}}
             </div>
 
         </fieldset>
@@ -104,7 +104,7 @@
             <div class="form-group flex-wrap">
                 <label class="drawing-label">Fully Connected Layers:</label>
                 <div>
-                  <button type='button' class="fcLayerBtn" disabled>1</button>
+                  <button type='button' class="fcLayerBtn">1</button>
                   <button type='button' class="fcLayerBtn">2</button>
                   <button type='button' class="fcLayerBtn">3</button>
                   <button type='button' class="fcLayerBtn">4</button>
@@ -117,9 +117,9 @@
         </div>
 
         <fieldset class='form-group-container'>
-            {{render_fieldlist_cnn(cnn_form.output_size)}}
-            {{render_fieldlist_cnn(cnn_form.dropout)}}
-            {{render_fieldlist_cnn(cnn_form.activation)}}
+            {{render_fieldlist_conv(cnn_form.output_size)}}
+            {{render_fieldlist_conv(cnn_form.dropout)}}
+            {{render_fieldlist_conv(cnn_form.activation)}}
         </fieldset>
 
     <input type='submit' value="Show CNN" class='form-submit'>

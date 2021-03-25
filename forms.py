@@ -34,7 +34,7 @@ class CNNForm(FlaskForm):
 
     stride = FieldList(FormField(XY_Form), min_entries=NUM_LAYERS)
 
-    conv_layer_on = MultiCheckboxField(choices=[(i, i) for i in range(4)])
+    conv_layer_on = MultiCheckboxField(label="On", choices=[(i, f"On-{i}") for i in range(NUM_LAYERS)])
 
     padding = FieldList(
         SelectField('Padding', choices=["same", "valid"], validators=[InputRequired()]),
@@ -42,12 +42,12 @@ class CNNForm(FlaskForm):
     )
 
     pool_size = FieldList(FormField(XY_Form), min_entries=NUM_LAYERS)
-    batch_norm = BooleanField('Batch Norm')
+    batch_norm = MultiCheckboxField(choices=[(i, f"Batch Norm-{i}") for i in range(4)])
 
     output_size = FieldList(IntegerField('Output Size', validators=[InputRequired()]), min_entries=NUM_LAYERS)
     dropout = FieldList(DecimalField('Dropout', places=1, widget=NumberInput(step=0.1), validators=[InputRequired()]), min_entries=NUM_LAYERS)
     activation = FieldList(SelectField('Activation Function', choices=['sigmoid', 'tanh', 'ReLu'], validators=[InputRequired()]), min_entries=NUM_LAYERS)
-    fc_layer_on = BooleanField('On')
+    fc_layer_on = MultiCheckboxField(label="On", choices=[(i, f"On-{i}") for i in range(NUM_LAYERS)])
 
 
 class RetrainModelForm(FlaskForm):

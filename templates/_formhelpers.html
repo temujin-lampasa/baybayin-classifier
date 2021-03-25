@@ -30,17 +30,17 @@
 </div>
 {% endmacro %}
 
-{% macro render_fieldlist_cnn(fieldlist) %}
+{% macro render_fieldlist_conv(fieldlist) %}
 {% for field in fieldlist %}
-<div class="cnn-layer{{loop.index}}">
+<div class="conv-layer{{loop.index}}" style="display: none;">
     {{render_field(field)}}
 </div>
 {% endfor %}
 {% endmacro %}
 
-{% macro render_fieldlist_cnn_xy(fieldlist)%}
+{% macro render_fieldlist_conv_xy(fieldlist)%}
 {% for field in fieldlist %}
-<div class="cnn-layer{{loop.index}}">
+<div class="conv-layer{{loop.index}}"  style="display: none;">
     {{render_field_xy(field)}}
 </div>
 {% endfor %}
