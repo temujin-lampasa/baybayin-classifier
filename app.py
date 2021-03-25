@@ -8,7 +8,7 @@ import shutil
 
 from models import DEFAULT_CNN_PARAMS, DEFAULT_TRAIN_PARAMS, ALTERNATE_CNN_PARAMS, classify_uploaded_file, train_model, generate_feature_maps
 
-from forms import CNNForm, RetrainModelForm
+from forms import CNNForm, RetrainModelForm, NUM_LAYERS
 from flask_wtf.csrf import CSRFProtect
 
 app = Flask(__name__)
@@ -102,16 +102,16 @@ def index():
     conv = session['cnn_params']['conv_layer_configs'][0]
     fc = session['cnn_params']['fc_layer_configs'][0]
     cnn_defaults = {
-        'filters': conv['filters'],
-        'kernel': {'x': conv['kernel_size'][0], 'y': conv['kernel_size'][1]},
-        'stride': {'x': conv['stride'][0], 'y': conv['stride'][1]},
-        'pool_size': {'x': conv['pool'][0], 'y': conv['pool'][1]},
-        'padding': conv['padding'],
-        'output_size': fc['size'],
-        'dropout': fc['dropout'],
+        'filters': [conv['filters'] for _ in range(NUM_LAYERS)],
+        'kernel': [{'x': conv['kernel_size'][0], 'y': conv['kernel_size'][1]}  for _ in range(NUM_LAYERS)],
+        'stride': [{'x': conv['stride'][0], 'y': conv['stride'][1]} for _ in range(NUM_LAYERS)],
+        'pool_size': [{'x': conv['pool'][0], 'y': conv['pool'][1]} for _ in range(NUM_LAYERS)],
+        'padding': [conv['padding'] for _ in range(NUM_LAYERS)],
+        'output_size': [fc['size'] for _ in range(NUM_LAYERS)],
+        'dropout': [fc['dropout'] for _ in range(NUM_LAYERS)],
     }
     
-    cnn_form = CNNForm()
+    cnn_form = CNNForm(data=cnn_defaults)
     retrain_form = RetrainModelForm()
 
     if cnn_form.validate_on_submit():
