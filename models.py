@@ -38,8 +38,8 @@ DEFAULT_CNN_PARAMS = {
                         {'size' : 84,
                         'dropout' : 0.0},
                     ],
-'batch_norm' : False,
 
+'batch_norm' : False,
 'activation_fn' : 'ReLU'
 }
 
@@ -49,7 +49,9 @@ DEFAULT_TRAIN_PARAMS = {
     'batch_size' : 4,
     'optimizer_class' : 'SGD',
     'learning_rate' : 0.001,
-    'momentum' : 0.9
+    'momentum' : 0.9,
+    'beta1': 0,
+    'beta2': 0,
 }
 
 ALTERNATE_CNN_PARAMS = {

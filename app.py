@@ -113,7 +113,7 @@ def index():
     cnn_formdata = {k: [v for _ in range(NUM_LAYERS)]  for k, v in cnn_layer_defaults.items()}
     
     cnn_form = CNNForm(data=cnn_formdata)
-    retrain_form = RetrainModelForm()
+    retrain_form = RetrainModelForm(data=DEFAULT_TRAIN_PARAMS)
     feature_maps_form = FeatureMapsForm()
 
     if cnn_form.validate_on_submit():
