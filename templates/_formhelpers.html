@@ -30,18 +30,15 @@
 </div>
 {% endmacro %}
 
-{% macro render_fieldlist_conv(fieldlist) %}
-{% for field in fieldlist %}
-<div class="conv-layer{{loop.index}}" style="display: none;">
-    {{render_field(field)}}
-</div>
-{% endfor %}
-{% endmacro %}
 
-{% macro render_fieldlist_conv_xy(fieldlist)%}
-{% for field in fieldlist %}
-<div class="conv-layer{{loop.index}}"  style="display: none;">
-    {{render_field_xy(field)}}
-</div>
-{% endfor %}
+{% macro render_fieldlist(fieldlist, layer_type, field_type)%}
+    {% for field in fieldlist %}
+        <div class="{{layer_type}}-layer{{loop.index}}"  style="display: none;">
+            {% if field_type == "single" %}
+                {{ render_field(field)}}
+            {% else %}
+                {{ render_field_xy(field) }}
+            {% endif %}
+        </div>
+    {% endfor %}
 {% endmacro %}
