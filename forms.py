@@ -1,7 +1,7 @@
 from wtforms import widgets
 from wtforms.widgets.html5 import NumberInput
 from wtforms.fields.html5 import IntegerField, DecimalField
-from wtforms.fields import FieldList, FormField, SelectField, SelectMultipleField
+from wtforms.fields import FieldList, FormField, SelectField, SelectMultipleField, HiddenField
 from flask_wtf import FlaskForm
 from wtforms.validators import InputRequired, NumberRange
 
@@ -56,3 +56,6 @@ class RetrainModelForm(FlaskForm):
     beta2 = DecimalField('Beta 2', places=2, widget=NumberInput(step=0.01))
     batch_size = IntegerField('Batch Size')
     epochs = IntegerField('Epochs')
+
+class FeatureMapsForm(FlaskForm):
+    h = HiddenField()
