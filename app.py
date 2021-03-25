@@ -22,29 +22,6 @@ CSRFProtect(app)
 db = SQLAlchemy(app)
 
 FIRST_LAUNCH = True
-# DEFAULT_TRAIN_PARAMS = {
-#     'optimizer': 'SGD',
-#     'learning_rate': 0.00,
-#     'momentum': 0.00,
-#     'beta1': 0.00,
-#     'beta2': 0.00,
-#     'batch_size': 32,    
-#     'epochs': 1,
-# }
-# DEFAULT_CNN_PARAMS = {
-#     'filters': 1,
-#     'kernel_x': 1,
-#     'kernel_y': 1,
-#     'stride_x': 1,
-#     'stride_y': 1,
-#     'padding': "valid",
-#     'pool_x':1,
-#     'pool_y': 1,
-#     'output_size': 1,
-#     'dropout': 1.0,
-#     'activation': "sigmoid",
-#  }
-
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
