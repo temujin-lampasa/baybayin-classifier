@@ -68,7 +68,7 @@
             <div class="form-group flex-wrap">
                 <label class="drawing-label">Convolutions:</label>
                 <div>
-                  <button type='button' class='convLayerBtn' disabled>1</button>
+                  <button type='button' class='convLayerBtn'>1</button>
                   <button type='button' class='convLayerBtn'>2</button>
                   <button type='button' class='convLayerBtn'>3</button>
                   <button type='button' class='convLayerBtn'>4</button>
@@ -112,7 +112,7 @@
             </div>
 
             <fieldset class="form-group-container">
-                {{ render_field(cnn_form.fc_layer_on) }}
+                {{ render_fieldlist(cnn_form.fc_layer_on, "fc", "single") }}
             </fieldset>
         </div>
 
