@@ -101,17 +101,18 @@ def index():
     # Todo: refactor this
     conv = session['cnn_params']['conv_layer_configs'][0]
     fc = session['cnn_params']['fc_layer_configs'][0]
-    cnn_defaults = {
-        'filters': [conv['filters'] for _ in range(NUM_LAYERS)],
-        'kernel': [{'x': conv['kernel_size'][0], 'y': conv['kernel_size'][1]}  for _ in range(NUM_LAYERS)],
-        'stride': [{'x': conv['stride'][0], 'y': conv['stride'][1]} for _ in range(NUM_LAYERS)],
-        'pool_size': [{'x': conv['pool'][0], 'y': conv['pool'][1]} for _ in range(NUM_LAYERS)],
-        'padding': [conv['padding'] for _ in range(NUM_LAYERS)],
-        'output_size': [fc['size'] for _ in range(NUM_LAYERS)],
-        'dropout': [fc['dropout'] for _ in range(NUM_LAYERS)],
+    cnn_layer_defaults = {
+        'filters': conv['filters'],
+        'kernel': {'x': conv['kernel_size'][0], 'y': conv['kernel_size'][1]},
+        'stride': {'x': conv['stride'][0], 'y': conv['stride'][1]},
+        'pool_size': {'x': conv['pool'][0], 'y': conv['pool'][1]},
+        'padding': conv['padding'],
+        'output_size': fc['size'],
+        'dropout': fc['dropout'],
     }
+    cnn_formdata = {k: [v for _ in range(NUM_LAYERS)]  for k, v in cnn_layer_defaults.items()}
     
-    cnn_form = CNNForm(data=cnn_defaults)
+    cnn_form = CNNForm(data=cnn_formdata)
     retrain_form = RetrainModelForm()
     feature_maps_form = FeatureMapsForm()
 
