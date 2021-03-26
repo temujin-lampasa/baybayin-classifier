@@ -126,10 +126,12 @@ input#drawing {
 }
 
 /* Retrain Section */
-#retrain-form-info{
+.retrain-section p {
   margin-bottom: 24px;
 }
 
-#instruction-div{
-  width: 50%;
+@media screen and (max-width:700px) {
+  .retrain-section .flex {
+    flex-direction:column-reverse;
+  }
 }
