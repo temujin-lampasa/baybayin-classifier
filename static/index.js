@@ -58,7 +58,7 @@ for (let i=1; i<=NUM_LAYERS; i++){
     fc_fields.push(document.querySelectorAll("div.fc-layer"+i+" input," +"div.fc-layer"+i+" select"));
 }
 
-function disable_fields(layer_type, layer_num){
+function set_disable_fields(layer_type, layer_num, value){
     if (layer_type=="conv"){
         input_fields = conv_fields;
     } else {
@@ -66,7 +66,7 @@ function disable_fields(layer_type, layer_num){
     }
     for (let field of input_fields[layer_num]){
         if (field.name != (layer_type+"_layer_on")){
-            field.disabled= !field.disabled;
+            field.disabled = value;
         }
     }
 }
@@ -76,11 +76,18 @@ function set_on_button(button_list, layer_type){
     for (let i=0; i<NUM_LAYERS; i++){
         button_list[i].onclick = function(){
             // Disable all fields in its layer
-            disable_fields(layer_type, i);
+            set_disable_fields(layer_type, i, !button_list[i].checked);
         }
     }
 }
 
 
+// Disable unchecked layers
+for(let i=0; i<NUM_LAYERS; i++){
+    set_disable_fields("conv", i, !conv_on_buttons[i].checked);
+    set_disable_fields("fc", i, !fc_on_buttons[i].checked);
+    }
+
+// Set button onclick function
 set_on_button(conv_on_buttons, "conv");
 set_on_button(fc_on_buttons, "fc");
