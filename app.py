@@ -8,7 +8,7 @@ import shutil
 
 from models import DEFAULT_CNN_PARAMS, DEFAULT_TRAIN_PARAMS, ALTERNATE_CNN_PARAMS, classify_uploaded_file, train_model, generate_feature_maps
 
-from forms import CNNForm, RetrainModelForm, FeatureMapsForm, NUM_LAYERS
+from forms import CNNForm, RetrainModelForm, NUM_LAYERS
 from flask_wtf.csrf import CSRFProtect
 
 app = Flask(__name__)
@@ -77,11 +77,10 @@ def index():
 
     cnn_form = CNNForm(data=cnn_formdata)
     retrain_form = RetrainModelForm(data=session['train_params'])
-    feature_maps_form = FeatureMapsForm()
 
     if cnn_form.validate_on_submit():
         session['cnn_params'] = form.data
-        return redirect("/")
+        return redirect('/cnn')
 
     if retrain_form.validate_on_submit():
         return redirect("/")
@@ -102,8 +101,7 @@ def index():
 
     return render_template("index.html",
                            cnn_form=cnn_form,
-                           retrain_form=retrain_form,
-                           fm_form=feature_maps_form)
+                           retrain_form=retrain_form)
 
 
 @app.route('/train', methods=['POST'])

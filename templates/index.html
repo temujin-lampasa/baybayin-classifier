@@ -126,6 +126,16 @@
 
     <input type='submit' value="Show CNN" class='form-submit'>
     </form>
+    
+    <div id='feature-maps'>
+        {% if session.get('feature_maps') %}
+            {% for filepath in session.get('feature_maps') %}
+                <img src='{{ filepath }}'>
+            {% endfor %}
+        {% endif %}
+        <table>
+        </table>
+    </div>
 </section>
 
 <section class="retrain-section">
@@ -166,23 +176,6 @@
 
         <input type='submit' value="Train Model"  action ='train' class="form-submit" onclick='document.getElementById("loading").style.display="block"'>
 
-    </form>
-</section>
-
-<section>
-    <h2>Show Feature Maps</h2>
-    <div id='feature-maps'>
-        {% if session.get('feature_maps') %}
-            {% for filepath in session.get('feature_maps') %}
-                <img src='{{ filepath }}'>
-            {% endfor %}
-        {% endif %}
-        <table>
-        </table>
-    </div>
-    <form method="POST" action="{{ url_for('cnn') }}">
-        {{fm_form.csrf_token}}
-        <input type="submit" value="Show Feature Maps" class="form-submit">
     </form>
 </section>
 
