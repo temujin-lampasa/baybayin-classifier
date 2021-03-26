@@ -181,6 +181,7 @@
         </table>
     </div>
     <form method="POST" action="{{ url_for('cnn') }}">
+        {{fm_form.csrf_token}}
         <input type="submit" value="Show Feature Maps" class="form-submit">
     </form>
 </section>

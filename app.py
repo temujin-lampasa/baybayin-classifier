@@ -8,7 +8,7 @@ import shutil
 
 from models import DEFAULT_CNN_PARAMS, DEFAULT_TRAIN_PARAMS, ALTERNATE_CNN_PARAMS, classify_uploaded_file, train_model, generate_feature_maps
 
-from forms import CNNForm, RetrainModelForm, NUM_LAYERS
+from forms import CNNForm, RetrainModelForm, FeatureMapsForm, NUM_LAYERS
 from flask_wtf.csrf import CSRFProtect
 
 app = Flask(__name__)
@@ -22,29 +22,6 @@ CSRFProtect(app)
 db = SQLAlchemy(app)
 
 FIRST_LAUNCH = True
-# DEFAULT_TRAIN_PARAMS = {
-#     'optimizer': 'SGD',
-#     'learning_rate': 0.00,
-#     'momentum': 0.00,
-#     'beta1': 0.00,
-#     'beta2': 0.00,
-#     'batch_size': 32,    
-#     'epochs': 1,
-# }
-# DEFAULT_CNN_PARAMS = {
-#     'filters': 1,
-#     'kernel_x': 1,
-#     'kernel_y': 1,
-#     'stride_x': 1,
-#     'stride_y': 1,
-#     'padding': "valid",
-#     'pool_x':1,
-#     'pool_y': 1,
-#     'output_size': 1,
-#     'dropout': 1.0,
-#     'activation': "sigmoid",
-#  }
-
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -101,18 +78,20 @@ def index():
     # Todo: refactor this
     conv = session['cnn_params']['conv_layer_configs'][0]
     fc = session['cnn_params']['fc_layer_configs'][0]
-    cnn_defaults = {
-        'filters': [conv['filters'] for _ in range(NUM_LAYERS)],
-        'kernel': [{'x': conv['kernel_size'][0], 'y': conv['kernel_size'][1]}  for _ in range(NUM_LAYERS)],
-        'stride': [{'x': conv['stride'][0], 'y': conv['stride'][1]} for _ in range(NUM_LAYERS)],
-        'pool_size': [{'x': conv['pool'][0], 'y': conv['pool'][1]} for _ in range(NUM_LAYERS)],
-        'padding': [conv['padding'] for _ in range(NUM_LAYERS)],
-        'output_size': [fc['size'] for _ in range(NUM_LAYERS)],
-        'dropout': [fc['dropout'] for _ in range(NUM_LAYERS)],
+    cnn_layer_defaults = {
+        'filters': conv['filters'],
+        'kernel': {'x': conv['kernel_size'][0], 'y': conv['kernel_size'][1]},
+        'stride': {'x': conv['stride'][0], 'y': conv['stride'][1]},
+        'pool_size': {'x': conv['pool'][0], 'y': conv['pool'][1]},
+        'padding': conv['padding'],
+        'output_size': fc['size'],
+        'dropout': fc['dropout'],
     }
+    cnn_formdata = {k: [v for _ in range(NUM_LAYERS)]  for k, v in cnn_layer_defaults.items()}
     
-    cnn_form = CNNForm(data=cnn_defaults)
-    retrain_form = RetrainModelForm()
+    cnn_form = CNNForm(data=cnn_formdata)
+    retrain_form = RetrainModelForm(data=DEFAULT_TRAIN_PARAMS)
+    feature_maps_form = FeatureMapsForm()
 
     if cnn_form.validate_on_submit():
         return redirect("/")
@@ -136,7 +115,8 @@ def index():
 
     return render_template("index.html",
                            cnn_form=cnn_form,
-                           retrain_form=retrain_form)
+                           retrain_form=retrain_form,
+                           fm_form=feature_maps_form)
 
 
 @app.route('/train', methods=['POST'])
