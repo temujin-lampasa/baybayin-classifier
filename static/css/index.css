@@ -33,6 +33,12 @@ select {
   width: fit-content;
 }
 
+button:disabled,
+button[disabled]{
+  background-color: #E1A46D;
+  color: #fff;
+}
+
 .flex{
   display: flex;
 }
