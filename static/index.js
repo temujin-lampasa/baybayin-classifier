@@ -47,6 +47,12 @@ fc_on_buttons = [];
 conv_fields = [];
 fc_fields = [];
 
+
+for (let i=0; i<NUM_LAYERS; i++){
+    conv_on_buttons.push(document.getElementById("conv_layer_on-"+i));
+    fc_on_buttons.push(document.getElementById("fc_layer_on-"+i));
+}
+
 for (let i=1; i<=NUM_LAYERS; i++){
     conv_fields.push(document.querySelectorAll("div.conv-layer"+i+" input," +"div.conv-layer"+i+" select"));
     fc_fields.push(document.querySelectorAll("div.fc-layer"+i+" input," +"div.fc-layer"+i+" select"));
