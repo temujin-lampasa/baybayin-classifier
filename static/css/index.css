@@ -45,7 +45,6 @@ select {
 .form-submit {
   width: 100%;
   margin-top: 10px;
-  margin-right: 10px;
   background: #1E3C3F;
   color: #fff;
   font-family: 'Mulish', sans-serif;
@@ -102,7 +101,7 @@ input#drawing {
   min-width: 310px;
 }
 
-#batch_norm {
+#batch_norm-0, #batch_norm-1, #batch_norm-2, #batch_norm-3 {
   width: auto;
 }
 
@@ -122,5 +121,14 @@ input#drawing {
 @media screen and (max-width:700px) {
   .retrain-section .flex {
     flex-direction:column-reverse;
+  }
+
+  .form-group {
+    margin: 0 0 24px 0;
+  }
+
+  .form-group-half {
+    width: 100%;
+    min-width: auto;
   }
 }
