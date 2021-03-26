@@ -18,31 +18,17 @@ from torchvision import transforms
 
 classes = ['a', 'ba', 'dara', 'ei', 'ga', 'ha', 'ka', 'kuw', 'la', 'ma', 'na', 'nga', 'ou', 'pa', 'sa', 'ta', 'tul', 'wa', 'ya']
 
-
 DEFAULT_CNN_PARAMS = {
-'conv_layer_configs' : [
-                        {'filters' : 6,
-                        'kernel_size' : (5, 5),
-                        'stride' : (1, 1),
-                        'pool' : (2, 2),
-                        'padding' : 'valid'},
-                        {'filters' : 16,
-                        'kernel_size' : (5, 5),
-                        'stride' : (1, 1),
-                        'pool' : (2, 2),
-                        'padding' : 'valid'}
-                    ],
-'fc_layer_configs' : [
-                        {'size' : 120,
-                        'dropout' : 0.0},
-                        {'size' : 84,
-                        'dropout' : 0.0},
-                    ],
-
-'batch_norm' : False,
-'activation_fn' : 'ReLU'
+    'filters': 6,
+    'kernel': {'x':5, 'y':5},
+    'stride': {'x':1, 'y':1},
+    'pool_size': {'x':2, 'y':2},
+    'padding': 'valid',
+    'output_size': 120,
+    'dropout': 0.0,
+    'batch_norm': False,
+    'activation': 'ReLU',
 }
-
 
 DEFAULT_TRAIN_PARAMS = {
     'epochs' : 2,

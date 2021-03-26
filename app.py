@@ -65,9 +65,6 @@ def index():
     if not session.get('train_params'):
         session['train_params'] = DEFAULT_TRAIN_PARAMS
     
-    print("Current train params")
-    print(session['train_params'])
-
     if not session.get('cnn_params'):
         session['cnn_params'] = DEFAULT_CNN_PARAMS
 
@@ -75,25 +72,15 @@ def index():
     # Forms ---------------
 
     # Set default values
-    # Todo: refactor this
-    conv = session['cnn_params']['conv_layer_configs'][0]
-    fc = session['cnn_params']['fc_layer_configs'][0]
-    cnn_layer_defaults = {
-        'filters': conv['filters'],
-        'kernel': {'x': conv['kernel_size'][0], 'y': conv['kernel_size'][1]},
-        'stride': {'x': conv['stride'][0], 'y': conv['stride'][1]},
-        'pool_size': {'x': conv['pool'][0], 'y': conv['pool'][1]},
-        'padding': conv['padding'],
-        'output_size': fc['size'],
-        'dropout': fc['dropout'],
-    }
-    cnn_formdata = {k: [v for _ in range(NUM_LAYERS)]  for k, v in cnn_layer_defaults.items()}
-    
+    # Repeat data for each field 1 type per layer
+    cnn_formdata = {k: [v for _ in range(NUM_LAYERS)]  for k, v in session['cnn_params'].items()}
+
     cnn_form = CNNForm(data=cnn_formdata)
-    retrain_form = RetrainModelForm(data=DEFAULT_TRAIN_PARAMS)
+    retrain_form = RetrainModelForm(data=session['train_params'])
     feature_maps_form = FeatureMapsForm()
 
     if cnn_form.validate_on_submit():
+        session['cnn_params'] = form.data
         return redirect("/")
 
     if retrain_form.validate_on_submit():
