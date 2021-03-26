@@ -84,7 +84,8 @@ def index():
 
     if cnn_form.validate_on_submit():
         print("Form validated.")
-        session['cnn_params'] = cnn_form.data
+        # ERROR: Object of type 'decimal' is not JSON serializable
+        # session['cnn_params'] = cnn_form.data
         return redirect('/cnn')
     else:
         print("Form validation failed")
@@ -128,7 +129,7 @@ def train():
     return redirect('/')
 
 
-@app.route('/cnn', methods=['POST'])
+@app.route('/cnn', methods=['POST', 'GET'])
 def cnn():
     # run CNN here
 
