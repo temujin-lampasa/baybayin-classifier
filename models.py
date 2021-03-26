@@ -28,6 +28,8 @@ DEFAULT_CNN_PARAMS = {
     'dropout': 0.0,
     'batch_norm': False,
     'activation': 'ReLU',
+    'conv_layer_on': ['0', '1', '2', '3'],
+    'fc_layer_on': ['0', '1', '2', '3'],
 }
 
 DEFAULT_TRAIN_PARAMS = {
