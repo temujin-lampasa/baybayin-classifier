@@ -74,18 +74,21 @@ def index():
     # Set default values
     # Repeat data for each field 1 type per layer
     cnn_formdata = {k: [v for _ in range(NUM_LAYERS)]  for k, v in session['cnn_params'].items()}
-    cnn_formdata['conv_layer_on'] = ['0', '1', '2', '3']
-    cnn_formdata['fc_layer_on'] = ['0', '1', '2', '3']
+    all_selected = [i for i in range(NUM_LAYERS)]
+    cnn_formdata['conv_layer_on'] = all_selected
+    cnn_formdata['fc_layer_on'] = all_selected
+    cnn_formdata['batch_norm'] = all_selected
 
     cnn_form = CNNForm(data=cnn_formdata)
     retrain_form = RetrainModelForm(data=session['train_params'])
 
     if cnn_form.validate_on_submit():
         print("Form validated.")
-        session['cnn_params'] = form.data
+        session['cnn_params'] = cnn_form.data
         return redirect('/cnn')
     else:
-        print(session['cnn_params'])
+        print("Form validation failed")
+        print(cnn_form.data)
 
     if retrain_form.validate_on_submit():
         print("Train form validated.")

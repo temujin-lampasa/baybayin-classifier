@@ -13,8 +13,12 @@ from wtforms import (
 
 NUM_LAYERS = 4
 
+class BaseForm(FlaskForm):
+    def __init__(self, *args, **kwargs):
+        kwargs['csrf_enabled'] = False
+        super().__init__(*args, **kwargs)
 
-class XY_Form(FlaskForm):
+class XY_Form(BaseForm):
     x = IntegerField('x', validators=[InputRequired(), NumberRange(min=0, max=10)])
     y = IntegerField('y', validators=[InputRequired(), NumberRange(min=0, max=10, message="error")])
 
@@ -33,7 +37,7 @@ class CNNForm(FlaskForm):
     kernel = FieldList(FormField(XY_Form, label="Kernel"), min_entries=NUM_LAYERS)
     stride = FieldList(FormField(XY_Form, label="Stride"), min_entries=NUM_LAYERS)
 
-    conv_layer_on = MultiCheckboxField(label="On", choices=[(i, "On") for i in range(NUM_LAYERS)])
+    conv_layer_on = MultiCheckboxField(label="On", choices=[(i, "On") for i in range(NUM_LAYERS)], coerce=int)
 
     padding = FieldList(
         SelectField('Padding', choices=["same", "valid"], validators=[InputRequired()]),
@@ -41,12 +45,12 @@ class CNNForm(FlaskForm):
     )
 
     pool_size = FieldList(FormField(XY_Form, label="Pool Size"), min_entries=NUM_LAYERS)
-    batch_norm = MultiCheckboxField(choices=[(i, "Batch Norm") for i in range(4)])
+    batch_norm = MultiCheckboxField(choices=[(i, "Batch Norm") for i in range(4)], coerce=int)
 
     output_size = FieldList(IntegerField('Output Size', validators=[InputRequired()]), min_entries=NUM_LAYERS)
     dropout = FieldList(DecimalField('Dropout', places=1, widget=NumberInput(step=0.1), validators=[InputRequired()]), min_entries=NUM_LAYERS)
     activation = FieldList(SelectField('Activation Function', choices=['sigmoid', 'tanh', 'ReLu'], validators=[InputRequired()]), min_entries=NUM_LAYERS)
-    fc_layer_on = MultiCheckboxField(label="On", choices=[(i, "On") for i in range(NUM_LAYERS)])
+    fc_layer_on = MultiCheckboxField(label="On", choices=[(i, "On") for i in range(NUM_LAYERS)], coerce=int)
 
 
 class RetrainModelForm(FlaskForm):

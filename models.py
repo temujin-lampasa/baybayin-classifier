@@ -26,8 +26,6 @@ DEFAULT_CNN_PARAMS = {
     'padding': 'valid',
     'output_size': 120,
     'dropout': 0.0,
-    'batch_norm': False,
-    'activation': 'ReLU',
 }
 
 DEFAULT_TRAIN_PARAMS = {
