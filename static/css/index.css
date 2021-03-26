@@ -9,16 +9,13 @@ form {
 }
 
 label, .green-label {
-  font-size: 24px;
   font-weight: bold;
-  margin-right: 10px;
   background: #1E3C3F;
   padding:10px;
   margin-right: 10px;
 }
 
 input, button, select {
-  font-size: 24px;
   font-family: 'Mulish', sans-serif;
   height: 48px;
   margin: 0 8px 0 0;
@@ -50,7 +47,6 @@ select {
   margin-top: 10px;
   margin-right: 10px;
   background: #1E3C3F;
-  font-size: 24px;
   color: #fff;
   font-family: 'Mulish', sans-serif;
   font-weight: bold;
@@ -84,7 +80,6 @@ select {
   background: #E1A46D;
   padding:10px;
   margin-left: 10px;
-  font-size: 24px;
   font-weight: bold;
   display: inline-block;
 }
@@ -94,7 +89,6 @@ select {
   margin-right: 10px;
   background: #1E3C3F;
   color: #fff;
-  font-size: 24px;
   font-family: 'Mulish', sans-serif;
 }
 
@@ -118,11 +112,6 @@ input#drawing {
 
 #cnn-form-info {
   margin-top: 32px;
-}
-
-.cnn-section .form-submit {
-  font-size: 24px;
-  font-weight: bold;
 }
 
 /* Retrain Section */
