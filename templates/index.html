@@ -14,7 +14,10 @@
     <h2>Drawing Board</h2>
     <div class="flex">
         <div class="drawing-canvas-background">
-            <div class="drawing-canvas"></div>
+            <canvas id="drawing-canvas">
+                Unfortunately your browser does not support HTML canvas.
+                <script src="{{url_for('static', filename='drawing.js')}}"></script>
+            </canvas>
         </div>
         <div">
             <div class="flex">
