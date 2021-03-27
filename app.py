@@ -9,7 +9,7 @@ import shutil
 import simplejson as json
 from models import DEFAULT_CNN_PARAMS, DEFAULT_TRAIN_PARAMS, ALTERNATE_CNN_PARAMS, classify_uploaded_file, train_model, generate_feature_maps
 
-from forms import CNNForm, RetrainModelForm, NUM_LAYERS
+from forms import CNNForm, NUM_LAYERS
 from flask_wtf.csrf import CSRFProtect
 
 app = Flask(__name__)
@@ -67,11 +67,17 @@ def index():
         session['train_params'] = DEFAULT_TRAIN_PARAMS
     
     if not session.get('cnn_formdata'):
-        session['cnn_formdata'] = {k: [v for _ in range(NUM_LAYERS)]  for k, v in DEFAULT_CNN_PARAMS.items()}
+        layer_params = {k: [v for _ in range(NUM_LAYERS)]  for k, v in DEFAULT_CNN_PARAMS.items()}
+        train_params= session['train_params']
+
         # Set default values for boolean fields.
         all_selected = [i for i in range(NUM_LAYERS)]
         for bool_field in ('conv_layer_on', 'fc_layer_on', 'batch_norm'):
-            session['cnn_formdata'][bool_field] = all_selected
+            layer_params[bool_field] = all_selected
+
+        session['cnn_formdata'] = {}
+        session['cnn_formdata'].update(layer_params)
+        session['cnn_formdata'].update(train_params)
     else:
         session['cnn_formdata'] = json.loads(session['cnn_formdata'])
 
@@ -79,21 +85,20 @@ def index():
     # Forms ---------------
 
     cnn_form = CNNForm(data=session['cnn_formdata'])
-    retrain_form = RetrainModelForm(data=session['train_params'])
 
     if cnn_form.validate_on_submit():
         print("CNN Form validated.")
         formdata = cnn_form.data
         formdata.pop('csrf_token')
         session['cnn_formdata'] = json.dumps(formdata, use_decimal=True)
-        return redirect('/cnn')
+        for k, v in formdata.items():
+            print(k, v)
+
+        return redirect('/')
     else:
         print("CNN Form validation failed")
         session['cnn_formdata'] = json.dumps(cnn_form.data, use_decimal=True)
 
-    if retrain_form.validate_on_submit():
-        print("Train form validated.")
-        return redirect("/")
     # ---------------------
 
     if not session.get('uid'):
@@ -110,14 +115,14 @@ def index():
         os.mkdir(os.path.join(os.getcwd(), f"users/{session['uid']}"))
 
     return render_template("index.html",
-                           cnn_form=cnn_form,
-                           retrain_form=retrain_form)
+                           cnn_form=cnn_form)
 
 
 @app.route('/train', methods=['POST'])
 def train():
     # Train here
     # session['train_params'] = request.form
+    # TODO: give the params
 
     # retrain mode with alternate hyperparameters
     train_model(

@@ -26,16 +26,16 @@ DEFAULT_CNN_PARAMS = {
     'padding': 'valid',
     'output_size': 120,
     'dropout': 0.0,
+    'epochs' : 2,
+    'batch_size' : 4,
+    'optimizer_class' : 'SGD',
+    'learning_rate' : 0.001,
+    'momentum' : 0.9,
+    'beta1': 0,
+    'beta2': 0,
 }
-
 
 MODEL_PARAMS = {
-    'conv_layer_configs': [
-        {k: v[0] for }
-    ]
-}
-
-OLD_DEFAULT_CNN_PARAMS = {
 'conv_layer_configs' : [
                         {'filters' : 6,
                         'kernel_size' : (5, 5),

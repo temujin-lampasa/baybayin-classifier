@@ -52,8 +52,6 @@ class CNNForm(FlaskForm):
     activation = FieldList(SelectField('Activation Function', choices=['sigmoid', 'tanh', 'ReLu'], validators=[InputRequired()]), min_entries=NUM_LAYERS)
     fc_layer_on = MultiCheckboxField(label="On", choices=[(i, "On") for i in range(NUM_LAYERS)], coerce=int)
 
-
-class RetrainModelForm(FlaskForm):
     optimizer = SelectField('Optimizer', choices=['SGD', 'Adam', 'Nadam', 'RMSProp'])
     learning_rate = DecimalField('Dropout', places=2, widget=NumberInput(step=0.01))
     beta1 = DecimalField('Beta 1', places=2, widget=NumberInput(step=0.01))
