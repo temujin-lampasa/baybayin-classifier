@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import shutil
 
+import simplejson as json
 from models import DEFAULT_CNN_PARAMS, DEFAULT_TRAIN_PARAMS, ALTERNATE_CNN_PARAMS, classify_uploaded_file, train_model, generate_feature_maps
 
 from forms import CNNForm, RetrainModelForm, NUM_LAYERS
@@ -65,31 +66,30 @@ def index():
     if not session.get('train_params'):
         session['train_params'] = DEFAULT_TRAIN_PARAMS
     
-    if not session.get('cnn_params'):
-        session['cnn_params'] = DEFAULT_CNN_PARAMS
+    if not session.get('cnn_formdata'):
+        session['cnn_formdata'] = {k: [v for _ in range(NUM_LAYERS)]  for k, v in DEFAULT_CNN_PARAMS.items()}
+        # Set default values for boolean fields.
+        all_selected = [i for i in range(NUM_LAYERS)]
+        for bool_field in ('conv_layer_on', 'fc_layer_on', 'batch_norm'):
+            session['cnn_formdata'][bool_field] = all_selected
+    else:
+        session['cnn_formdata'] = json.loads(session['cnn_formdata'])
 
 
     # Forms ---------------
 
-    # Set default values
-    # Repeat data for each field 1 type per layer
-    cnn_formdata = {k: [v for _ in range(NUM_LAYERS)]  for k, v in session['cnn_params'].items()}
-    all_selected = [i for i in range(NUM_LAYERS)]
-    cnn_formdata['conv_layer_on'] = all_selected
-    cnn_formdata['fc_layer_on'] = all_selected
-    cnn_formdata['batch_norm'] = all_selected
-
-    cnn_form = CNNForm(data=cnn_formdata)
+    cnn_form = CNNForm(data=session['cnn_formdata'])
     retrain_form = RetrainModelForm(data=session['train_params'])
 
     if cnn_form.validate_on_submit():
-        print("Form validated.")
-        # ERROR: Object of type 'decimal' is not JSON serializable
-        # session['cnn_params'] = cnn_form.data
+        print("CNN Form validated.")
+        formdata = cnn_form.data
+        formdata.pop('csrf_token')
+        session['cnn_formdata'] = json.dumps(formdata, use_decimal=True)
         return redirect('/cnn')
     else:
-        print("Form validation failed")
-        print(cnn_form.data)
+        print("CNN Form validation failed")
+        session['cnn_formdata'] = json.dumps(cnn_form.data, use_decimal=True)
 
     if retrain_form.validate_on_submit():
         print("Train form validated.")
