@@ -28,6 +28,37 @@ DEFAULT_CNN_PARAMS = {
     'dropout': 0.0,
 }
 
+
+MODEL_PARAMS = {
+    'conv_layer_configs': [
+        {k: v[0] for }
+    ]
+}
+
+OLD_DEFAULT_CNN_PARAMS = {
+'conv_layer_configs' : [
+                        {'filters' : 6,
+                        'kernel_size' : (5, 5),
+                        'stride' : (1, 1),
+                        'pool' : (2, 2),
+                        'padding' : 'valid'},
+                        {'filters' : 16,
+                        'kernel_size' : (5, 5),
+                        'stride' : (1, 1),
+                        'pool' : (2, 2),
+                        'padding' : 'valid'}
+                    ],
+'fc_layer_configs' : [
+                        {'size' : 120,
+                        'dropout' : 0.0},
+                        {'size' : 84,
+                        'dropout' : 0.0},
+                    ],
+
+'batch_norm' : False,
+'activation_fn' : 'ReLU'
+}
+
 DEFAULT_TRAIN_PARAMS = {
     'epochs' : 2,
     'batch_size' : 4,
