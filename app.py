@@ -95,7 +95,7 @@ def index():
         for k, v in formdata.items():
             print(k, v)
 
-        return redirect('/')
+        return redirect('/train')
     else:
         print("CNN Form validation failed")
         session['cnn_formdata'] = json.dumps(cnn_form.data, use_decimal=True)
@@ -125,11 +125,70 @@ def index():
                            fm_form=feature_maps_form)
 
 
-@app.route('/train', methods=['POST'])
+@app.route('/train', methods=['GET', 'POST'])
 def train():
     # Train here
     # session['train_params'] = request.form
     # TODO: give the params
+
+
+    # Convert wtforms form data
+    # into a format the model can understand
+    # session['cnn_formdata'] --> CNN_PARAMS, TRAIN_PARAMS
+
+    cnn_formdata = json.loads(session['cnn_formdata'])
+
+    # Note: 
+    # training forms are single values. 
+    # Conv/FC Layer forms are lists of length NUM_LAYERS
+    xy_forms = ['kernel', 'stride', 'pool_size']
+    fc_forms = ['size']
+    conv_forms = ['filters', 'kernel', 'stride', 'conv_layer_on', 'pool_size', 'padding']
+    train_forms = ['optimizer', 'learning_rate', 'beta1', 'beta2', 'batch_size', 'epochs']
+
+
+    CNN_params = {}
+
+    conv_config_template = {
+        'filters': 0,
+        'kernel': 0,
+        'stride': 0,
+        'pool_size': 0,
+        'padding': 0,
+    }
+
+    fc_config_template = {
+        'size': 0,
+        'dropout': 0
+    }
+    
+    CNN_params['conv_layer_configs'] = [conv_config_template for _ in range(NUM_LAYERS)]
+    CNN_params['fc_layer_configs'] =  [fc_config_template for _ in range(NUM_LAYERS)]
+
+    TRAIN_params = {
+        'epochs': cnn_formdata['epochs'],
+        'batch_size': cnn_formdata['batch_size'],
+    }
+
+    for layer_idx in range(NUM_LAYERS):
+        for field, value in cnn_formdata.items():
+
+            # CONV config
+            if field in conv_config_template:
+                if field in xy_forms:
+                    res = (value[layer_idx]['x'], value[layer_idx]['y'])
+                else:
+                    res = value[layer_idx]
+                CNN_params['conv_layer_configs'][layer_idx][field] = res
+            
+            # FC config
+            if field in fc_config_template:
+                pass
+
+            # Train params
+            if field in train_forms:
+                pass
+    
 
     # retrain mode with alternate hyperparameters
     train_model(
