@@ -9,7 +9,7 @@ import shutil
 import simplejson as json
 from models import DEFAULT_CNN_PARAMS, DEFAULT_TRAIN_PARAMS, ALTERNATE_CNN_PARAMS, classify_uploaded_file, train_model, generate_feature_maps
 
-from forms import CNNForm, NUM_LAYERS
+from forms import CNNForm, FeatureMapsForm, NUM_LAYERS
 from flask_wtf.csrf import CSRFProtect
 
 app = Flask(__name__)
@@ -84,6 +84,7 @@ def index():
 
     # Forms ---------------
 
+    # CNN Layers & Training Form
     cnn_form = CNNForm(data=session['cnn_formdata'])
 
     if cnn_form.validate_on_submit():
@@ -99,6 +100,11 @@ def index():
         print("CNN Form validation failed")
         session['cnn_formdata'] = json.dumps(cnn_form.data, use_decimal=True)
 
+    # Show Feature Maps
+    feature_maps_form = FeatureMapsForm()
+
+    if feature_maps_form.validate_on_submit():
+        return redirect('/cnn')
     # ---------------------
 
     if not session.get('uid'):
@@ -115,7 +121,8 @@ def index():
         os.mkdir(os.path.join(os.getcwd(), f"users/{session['uid']}"))
 
     return render_template("index.html",
-                           cnn_form=cnn_form)
+                           cnn_form=cnn_form,
+                           fm_form=feature_maps_form)
 
 
 @app.route('/train', methods=['POST'])

@@ -58,3 +58,7 @@ class CNNForm(FlaskForm):
     beta2 = DecimalField('Beta 2', places=2, widget=NumberInput(step=0.01))
     batch_size = IntegerField('Batch Size')
     epochs = IntegerField('Epochs')
+
+
+class FeatureMapsForm(FlaskForm):
+    h = HiddenField()
