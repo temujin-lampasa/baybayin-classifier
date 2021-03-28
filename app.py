@@ -142,7 +142,7 @@ def train():
     # training forms are single values. 
     # Conv/FC Layer forms are lists of length NUM_LAYERS
     xy_forms = ['kernel', 'stride', 'pool_size']
-    fc_forms = ['size']
+    fc_forms = ['output_size']
     conv_forms = ['filters', 'kernel', 'stride', 'conv_layer_on', 'pool_size', 'padding']
     train_forms = ['optimizer', 'learning_rate', 'beta1', 'beta2', 'batch_size', 'epochs']
 
@@ -158,7 +158,7 @@ def train():
     }
 
     fc_config_template = {
-        'size': 0,
+        'output_size': 0,
         'dropout': 0
     }
     
@@ -183,7 +183,8 @@ def train():
             
             # FC config
             if field in fc_config_template:
-                pass
+                res = value[layer_idx]
+                CNN_params['fc_layer_configs'][layer_idx][field] = res
 
             # Train params
             if field in train_forms:
