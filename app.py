@@ -92,6 +92,7 @@ def index():
         formdata = cnn_form.data
         formdata.pop('csrf_token')
         session['cnn_formdata'] = json.dumps(formdata, use_decimal=True)
+        print("FORMDATA")
         for k, v in formdata.items():
             print(k, v)
 
@@ -166,8 +167,13 @@ def train():
     CNN_params['fc_layer_configs'] =  [fc_config_template for _ in range(NUM_LAYERS)]
 
     TRAIN_params = {
-        'epochs': cnn_formdata['epochs'],
-        'batch_size': cnn_formdata['batch_size'],
+        'epochs': 2,
+        'batch_size': 4,
+        'optimizer': 'SGD',
+        'learning_rate': 0.001,
+        'momentum': 0.9,
+        'beta1': 0,
+        'beta2': 0,
     }
 
     for layer_idx in range(NUM_LAYERS):
@@ -188,8 +194,7 @@ def train():
 
             # Train params
             if field in train_forms:
-                pass
-    
+                TRAIN_params[field] = value
 
     # retrain mode with alternate hyperparameters
     train_model(

@@ -32,7 +32,7 @@ DEFAULT_CNN_PARAMS = {
 DEFAULT_TRAIN_PARAMS = {
     'epochs' : 2,
     'batch_size' : 4,
-    'optimizer_class' : 'SGD',
+    'optimizer' : 'SGD',
     'learning_rate' : 0.001,
     'momentum' : 0.9,
     'beta1': 0,
@@ -245,9 +245,9 @@ def train_model(cnn_args, train_args, save_path):
     baybayin_trainloader, baybayin_testloader = create_loaders(train_args['batch_size'])
 
     # initialize optimizer
-    if train_args['optimizer_class'] == 'SGD':
+    if train_args['optimizer'] == 'SGD':
         optimizer = optim.SGD(model.parameters(), lr=train_args['learning_rate'], momentum=train_args['momentum'])
-    elif train_args['optimizer_class'] == 'Adam':
+    elif train_args['optimizer'] == 'Adam':
         optimizer = optim.Adam(model.parameters(), lr=train_args['learning_rate'], betas=train_args['betas'])
 
     criterion = nn.CrossEntropyLoss() # initialize loss
