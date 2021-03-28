@@ -1,17 +1,17 @@
-var conv_buttons = document.getElementsByClassName("convLayerBtn")
-var fc_buttons = document.getElementsByClassName("fcLayerBtn")
+var conv_buttons = document.getElementsByClassName("convLayerBtn");
+var fc_buttons = document.getElementsByClassName("fcLayerBtn");
 
 const NUM_LAYERS = 4;
 conv_layers = [];
 fc_layers = [];
 
 for (let i=1; i<=NUM_LAYERS; i++) {
-    conv_layers.push(document.getElementsByClassName("conv-layer"+i))
-    fc_layers.push(document.getElementsByClassName("fc-layer"+i))
+    conv_layers.push(document.getElementsByClassName("conv-layer"+i));
+    fc_layers.push(document.getElementsByClassName("fc-layer"+i));
 }
 
 
-function setBtnOnClick(buttons, layers) {
+function set_layer_button(buttons, layers) {
     for (let i=0; i< NUM_LAYERS; i++){
         buttons[i].onclick = function() {
 
@@ -23,7 +23,7 @@ function setBtnOnClick(buttons, layers) {
 
             // Make the layer i visible. Make all other layers invisible.
             for (let j=0; j<NUM_LAYERS; j++) {
-                let display = (j!=i) ? "none": ""
+                let display = (j!=i) ? "none": "";
                 for (let elem of layers[j]) {
                     elem.style.display = display;
                 }
@@ -32,10 +32,62 @@ function setBtnOnClick(buttons, layers) {
     }
 }
 
-setBtnOnClick(conv_buttons, conv_layers);
-setBtnOnClick(fc_buttons, fc_layers);
+set_layer_button(conv_buttons, conv_layers);
+set_layer_button(fc_buttons, fc_layers);
 
 
 // Set first buttons clicked by default
 conv_buttons[0].click();
 fc_buttons[0].click();
+
+
+conv_on_buttons = [];
+fc_on_buttons = [];
+
+conv_fields = [];
+fc_fields = [];
+
+
+for (let i=0; i<NUM_LAYERS; i++){
+    conv_on_buttons.push(document.getElementById("conv_layer_on-"+i));
+    fc_on_buttons.push(document.getElementById("fc_layer_on-"+i));
+}
+
+for (let i=1; i<=NUM_LAYERS; i++){
+    conv_fields.push(document.querySelectorAll("div.conv-layer"+i+" input," +"div.conv-layer"+i+" select"));
+    fc_fields.push(document.querySelectorAll("div.fc-layer"+i+" input," +"div.fc-layer"+i+" select"));
+}
+
+function set_disable_fields(layer_type, layer_num, value){
+    if (layer_type=="conv"){
+        input_fields = conv_fields;
+    } else {
+        input_fields = fc_fields;
+    }
+    for (let field of input_fields[layer_num]){
+        if (field.name != (layer_type+"_layer_on")){
+            field.disabled = value;
+        }
+    }
+}
+
+
+function set_on_button(button_list, layer_type){
+    for (let i=0; i<NUM_LAYERS; i++){
+        button_list[i].onclick = function(){
+            // Disable all fields in its layer
+            set_disable_fields(layer_type, i, !button_list[i].checked);
+        }
+    }
+}
+
+
+// Disable unchecked layers
+for(let i=0; i<NUM_LAYERS; i++){
+    set_disable_fields("conv", i, !conv_on_buttons[i].checked);
+    set_disable_fields("fc", i, !fc_on_buttons[i].checked);
+    }
+
+// Set button onclick function
+set_on_button(conv_on_buttons, "conv");
+set_on_button(fc_on_buttons, "fc");

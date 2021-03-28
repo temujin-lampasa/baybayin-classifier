@@ -18,29 +18,14 @@ from torchvision import transforms
 
 classes = ['a', 'ba', 'dara', 'ei', 'ga', 'ha', 'ka', 'kuw', 'la', 'ma', 'na', 'nga', 'ou', 'pa', 'sa', 'ta', 'tul', 'wa', 'ya']
 
-
 DEFAULT_CNN_PARAMS = {
-'conv_layer_configs' : [
-                        {'filters' : 6,
-                        'kernel_size' : (5, 5),
-                        'stride' : (1, 1),
-                        'pool' : (2, 2),
-                        'padding' : 'valid'},
-                        {'filters' : 16,
-                        'kernel_size' : (5, 5),
-                        'stride' : (1, 1),
-                        'pool' : (2, 2),
-                        'padding' : 'valid'}
-                    ],
-'fc_layer_configs' : [
-                        {'size' : 120,
-                        'dropout' : 0.0},
-                        {'size' : 84,
-                        'dropout' : 0.0},
-                    ],
-'batch_norm' : False,
-
-'activation_fn' : 'ReLU'
+    'filters': 6,
+    'kernel': {'x':5, 'y':5},
+    'stride': {'x':1, 'y':1},
+    'pool_size': {'x':2, 'y':2},
+    'padding': 'valid',
+    'output_size': 120,
+    'dropout': 0.0,
 }
 
 
@@ -49,20 +34,22 @@ DEFAULT_TRAIN_PARAMS = {
     'batch_size' : 4,
     'optimizer_class' : 'SGD',
     'learning_rate' : 0.001,
-    'momentum' : 0.9
+    'momentum' : 0.9,
+    'beta1': 0,
+    'beta2': 0,
 }
 
 ALTERNATE_CNN_PARAMS = {
 'conv_layer_configs' : [
                         {'filters' : 6,
-                        'kernel_size' : (7, 7),
+                        'kernel' : (7, 7),
                         'stride' : (1, 1),
-                        'pool' : (2, 2),
+                        'pool_size' : (2, 2),
                         'padding' : 'valid'},
                         {'filters' : 16,
-                        'kernel_size' : (5, 5),
+                        'kernel' : (5, 5),
                         'stride' : (1, 1),
-                        'pool' : (2, 2),
+                        'pool_size' : (2, 2),
                         'padding' : 'valid'}
                     ],
 'fc_layer_configs' : [
@@ -114,18 +101,18 @@ class baybayin_net(nn.Module):
                 self.conv_layers.append(
                     nn.ZeroPad2d(
                         same_pad_values(
-                            dim, conv_layer['kernel_size'], conv_layer['stride']
+                            dim, conv_layer['kernel'], conv_layer['stride']
                         )
                     )
                 )
             else:
-                dim = find_new_dim(dim, conv_layer['kernel_size'], conv_layer['stride'])
+                dim = find_new_dim(dim, conv_layer['kernel'], conv_layer['stride'])
       
             self.conv_layers.append(
                 nn.Conv2d(
                   in_channels=(3 if i==0 else args['conv_layer_configs'][i-1]['filters']),
                   out_channels=conv_layer['filters'],
-                  kernel_size=conv_layer['kernel_size'],
+                  kernel_size=conv_layer['kernel'],
                   stride=conv_layer['stride']
                 )
             )
@@ -138,8 +125,8 @@ class baybayin_net(nn.Module):
             if args['batch_norm']:
                 self.conv_layers.append(nn.BatchNorm2d(conv_layer['filters']))
       
-            self.conv_layers.append(nn.MaxPool2d(kernel_size=conv_layer['pool']))
-            dim = find_new_dim(dim, conv_layer['pool'], (2, 2))
+            self.conv_layers.append(nn.MaxPool2d(kernel_size=conv_layer['pool_size']))
+            dim = find_new_dim(dim, conv_layer['pool_size'], (2, 2))
     
         self.conv_layers = nn.ModuleList(self.conv_layers)
         

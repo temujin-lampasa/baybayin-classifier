@@ -6,9 +6,10 @@ import os
 from pathlib import Path
 import shutil
 
+import simplejson as json
 from models import DEFAULT_CNN_PARAMS, DEFAULT_TRAIN_PARAMS, ALTERNATE_CNN_PARAMS, classify_uploaded_file, train_model, generate_feature_maps
 
-from forms import CNNForm, RetrainModelForm, NUM_LAYERS
+from forms import CNNForm, FeatureMapsForm, NUM_LAYERS
 from flask_wtf.csrf import CSRFProtect
 
 app = Flask(__name__)
@@ -22,29 +23,6 @@ CSRFProtect(app)
 db = SQLAlchemy(app)
 
 FIRST_LAUNCH = True
-# DEFAULT_TRAIN_PARAMS = {
-#     'optimizer': 'SGD',
-#     'learning_rate': 0.00,
-#     'momentum': 0.00,
-#     'beta1': 0.00,
-#     'beta2': 0.00,
-#     'batch_size': 32,    
-#     'epochs': 1,
-# }
-# DEFAULT_CNN_PARAMS = {
-#     'filters': 1,
-#     'kernel_x': 1,
-#     'kernel_y': 1,
-#     'stride_x': 1,
-#     'stride_y': 1,
-#     'padding': "valid",
-#     'pool_x':1,
-#     'pool_y': 1,
-#     'output_size': 1,
-#     'dropout': 1.0,
-#     'activation': "sigmoid",
-#  }
-
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -91,37 +69,45 @@ def index():
     if not session.get('train_params'):
         session['train_params'] = DEFAULT_TRAIN_PARAMS
     
-    print("Current train params")
-    print(session['train_params'])
+    if not session.get('cnn_formdata'):
+        layer_params = {k: [v for _ in range(NUM_LAYERS)]  for k, v in DEFAULT_CNN_PARAMS.items()}
+        train_params= session['train_params']
 
-    if not session.get('cnn_params'):
-        session['cnn_params'] = DEFAULT_CNN_PARAMS
+        # Set default values for boolean fields.
+        all_selected = [i for i in range(NUM_LAYERS)]
+        for bool_field in ('conv_layer_on', 'fc_layer_on', 'batch_norm'):
+            layer_params[bool_field] = all_selected
+
+        session['cnn_formdata'] = {}
+        session['cnn_formdata'].update(layer_params)
+        session['cnn_formdata'].update(train_params)
+    else:
+        session['cnn_formdata'] = json.loads(session['cnn_formdata'])
 
 
     # Forms ---------------
 
-    # Set default values
-    # Todo: refactor this
-    conv = session['cnn_params']['conv_layer_configs'][0]
-    fc = session['cnn_params']['fc_layer_configs'][0]
-    cnn_defaults = {
-        'filters': [conv['filters'] for _ in range(NUM_LAYERS)],
-        'kernel': [{'x': conv['kernel_size'][0], 'y': conv['kernel_size'][1]}  for _ in range(NUM_LAYERS)],
-        'stride': [{'x': conv['stride'][0], 'y': conv['stride'][1]} for _ in range(NUM_LAYERS)],
-        'pool_size': [{'x': conv['pool'][0], 'y': conv['pool'][1]} for _ in range(NUM_LAYERS)],
-        'padding': [conv['padding'] for _ in range(NUM_LAYERS)],
-        'output_size': [fc['size'] for _ in range(NUM_LAYERS)],
-        'dropout': [fc['dropout'] for _ in range(NUM_LAYERS)],
-    }
-    
-    cnn_form = CNNForm(data=cnn_defaults)
-    retrain_form = RetrainModelForm()
+    # CNN Layers & Training Form
+    cnn_form = CNNForm(data=session['cnn_formdata'])
 
     if cnn_form.validate_on_submit():
-        return redirect("/")
+        print("CNN Form validated.")
+        formdata = cnn_form.data
+        formdata.pop('csrf_token')
+        session['cnn_formdata'] = json.dumps(formdata, use_decimal=True)
+        for k, v in formdata.items():
+            print(k, v)
 
-    if retrain_form.validate_on_submit():
-        return redirect("/")
+        return redirect('/train')
+    else:
+        print("CNN Form validation failed")
+        session['cnn_formdata'] = json.dumps(cnn_form.data, use_decimal=True)
+
+    # Show Feature Maps
+    feature_maps_form = FeatureMapsForm()
+
+    if feature_maps_form.validate_on_submit():
+        return redirect('/cnn')
     # ---------------------
 
     if not session.get('uid'):
@@ -139,13 +125,73 @@ def index():
 
     return render_template("index.html",
                            cnn_form=cnn_form,
-                           retrain_form=retrain_form)
+                           fm_form=feature_maps_form)
 
 
-@app.route('/train', methods=['POST'])
+@app.route('/train', methods=['GET', 'POST'])
 def train():
     # Train here
     # session['train_params'] = request.form
+    # TODO: give the params
+
+
+    # Convert wtforms form data
+    # into a format the model can understand
+    # session['cnn_formdata'] --> CNN_PARAMS, TRAIN_PARAMS
+
+    cnn_formdata = json.loads(session['cnn_formdata'])
+
+    # Note: 
+    # training forms are single values. 
+    # Conv/FC Layer forms are lists of length NUM_LAYERS
+    xy_forms = ['kernel', 'stride', 'pool_size']
+    fc_forms = ['size']
+    conv_forms = ['filters', 'kernel', 'stride', 'conv_layer_on', 'pool_size', 'padding']
+    train_forms = ['optimizer', 'learning_rate', 'beta1', 'beta2', 'batch_size', 'epochs']
+
+
+    CNN_params = {}
+
+    conv_config_template = {
+        'filters': 0,
+        'kernel': 0,
+        'stride': 0,
+        'pool_size': 0,
+        'padding': 0,
+    }
+
+    fc_config_template = {
+        'size': 0,
+        'dropout': 0
+    }
+    
+    CNN_params['conv_layer_configs'] = [conv_config_template for _ in range(NUM_LAYERS)]
+    CNN_params['fc_layer_configs'] =  [fc_config_template for _ in range(NUM_LAYERS)]
+
+    TRAIN_params = {
+        'epochs': cnn_formdata['epochs'],
+        'batch_size': cnn_formdata['batch_size'],
+    }
+
+    for layer_idx in range(NUM_LAYERS):
+        for field, value in cnn_formdata.items():
+
+            # CONV config
+            if field in conv_config_template:
+                if field in xy_forms:
+                    res = (value[layer_idx]['x'], value[layer_idx]['y'])
+                else:
+                    res = value[layer_idx]
+                CNN_params['conv_layer_configs'][layer_idx][field] = res
+            
+            # FC config
+            if field in fc_config_template:
+                pass
+
+            # Train params
+            if field in train_forms:
+                pass
+    
 
     # retrain mode with alternate hyperparameters
     train_model(
@@ -157,7 +203,7 @@ def train():
     return redirect('/')
 
 
-@app.route('/cnn', methods=['POST'])
+@app.route('/cnn', methods=['POST', 'GET'])
 def cnn():
     # run CNN here
 

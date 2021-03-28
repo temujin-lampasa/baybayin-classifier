@@ -9,22 +9,24 @@
 {% endblock %}
 
 {% block body %}
-<div class='section'>
-    <div class="drawing-board">
-        <h2>Drawing Board</h2>
-    </div>
-    <div class="drawing-content">
+
+<section class="drawing-section">
+    <h2>Drawing Board</h2>
+    <div class="flex">
         <div class="drawing-canvas-background">
-            <div class="drawing-canvas"></div>
+            <canvas id="drawing-canvas">
+                Unfortunately your browser does not support HTML canvas.
+                <script src="{{url_for('static', filename='drawing.js')}}"></script>
+            </canvas>
         </div>
-        <div class="drawing-rows">
-            <div class="row">
-                <h3 class="drawing-label">Prediction: </h3>
-                <h3 class="drawing-output">A</h3>
+        <div">
+            <div class="flex">
+                <label class="green-label">Prediction: </label>
+                <div class="yellow-textbox">A</div>
             </div>
-            <div class="row">
-                <h3 class="drawing-label">Probability: </h3>
-                <h3 class="drawing-output">0%</h3>
+            <div class="flex">
+                <label class="green-label">Probability: </label>
+                <div class="yellow-textbox">0%</div>
             </div>
             <div>
                 <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
@@ -43,16 +45,16 @@
         Probability: {{ session.probability }}%</p>
         {% endif %}
         <form method="POST" action="classify" name="classify" enctype="multipart/form-data">
-            <div class="label-div">
-                <h3 class="drawing-label">Classify Image</h3>
-            </div>
+
+            <label class="green-label">Classify Image</label>
+
             <input type="file" name="drawing" id="drawing">
             <input type="submit">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         </form>
     </div>
 
-</div>
+</section>
 
 <section class="cnn-section">
     <h2>Convolutional Neural Networks</h2>
@@ -67,7 +69,7 @@
 
         <div class="flex-wrap">
             <div class="form-group flex-wrap">
-                <label class="drawing-label">Convolutions:</label>
+                <label class="green-label">Convolutions:</label>
                 <div>
                   <button type='button' class='convLayerBtn'>1</button>
                   <button type='button' class='convLayerBtn'>2</button>
@@ -103,7 +105,7 @@
 
         <div class="flex-wrap">
             <div class="form-group flex-wrap">
-                <label class="drawing-label">Fully Connected Layers:</label>
+                <label class="green-label">Fully Connected Layers:</label>
                 <div>
                   <button type='button' class="fcLayerBtn">1</button>
                   <button type='button' class="fcLayerBtn">2</button>
@@ -123,40 +125,35 @@
             {{render_fieldlist(cnn_form.activation, "fc", "single")}}
         </fieldset>
 
-    <input type='submit' value="Show CNN" class='form-submit'>
-    </form>
-</section>
 
-<section class="retrain-section">
-
-    <div class="drawing-board">
-        <h2>Retrain Model</h2>
-    </div>
-
-    <form method="POST" action="">
-
-        {{ retrain_form.csrf_token }}
+    <h2>Retrain Model</h2>
 
         <div id='retrain-form-info'>
             <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.”</p>
         </div>
 
-        <div class = "flex">
-            <fieldset class="retrain-form retrain-form-group">
-                {{ render_field(retrain_form.optimizer) }}
-                {{ render_field(retrain_form.learning_rate) }}
-                {{ render_field(retrain_form.beta1) }}
-                {{ render_field(retrain_form.beta2) }}
-                {{ render_field(retrain_form.batch_size) }}
-                {{ render_field(retrain_form.epochs) }}
+        <div class= "flex">
+            <fieldset class="form-group-container">
+                {{ render_field(cnn_form.optimizer) }}
+                {{ render_field(cnn_form.learning_rate) }}
+                {{ render_field(cnn_form.beta1) }}
+                {{ render_field(cnn_form.beta2) }}
+                {{ render_field(cnn_form.batch_size) }}
+                {{ render_field(cnn_form.epochs) }}
             </fieldset>
-
             <div id='instruction-div'>
             <h3>Instructions:</h3>
             <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.”</p>
             </div>
-
-        </div>     
+        </div>
+        {% if cnn_form.errors %}
+        ERRORS:
+        <ul>
+            {% for key, val in cnn_form.errors.items() %}
+                <li>{{key}} -- {{val}}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
 
         <div id='loading' style='display:none'>
             <center>
@@ -168,9 +165,10 @@
         <input type='submit' value="Train Model"  action ='train' class="form-submit" onclick='document.getElementById("loading").style.display="block"'>
 
     </form>
-</div>
+</section>
 
-<div class="section">
+
+<section>
     <h2>Show Feature Maps</h2>
     <div id='feature-maps'>
         {% if session.get('feature_maps') %}
@@ -178,13 +176,13 @@
                 <img src='{{ filepath }}'>
             {% endfor %}
         {% endif %}
-        <table>
-        </table>
     </div>
     <form method="POST" action="{{ url_for('cnn') }}">
+        {{ fm_form.csrf_token }}
         <input type="submit" value="Show Feature Maps" class="form-submit">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     </form>
-</div>
+</section>
+
 <script src="{{url_for('static', filename='index.js')}}"></script>
 {% endblock %}
