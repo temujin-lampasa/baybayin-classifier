@@ -148,7 +148,11 @@ def train():
     train_forms = ['optimizer', 'learning_rate', 'beta1', 'beta2', 'batch_size', 'epochs']
 
 
-    CNN_params = {}
+    CNN_params = {
+    'batch_norm' : False,
+    'dropout' : 0.5,
+    'activation_fn' : 'ReLU'
+    }
 
     conv_config_template = {
         'filters': 0,
@@ -198,8 +202,8 @@ def train():
 
     # retrain mode with alternate hyperparameters
     train_model(
-        ALTERNATE_CNN_PARAMS,
-        DEFAULT_TRAIN_PARAMS,
+        CNN_params,
+        TRAIN_params,
         os.path.join(os.getcwd(), f"users/{session['uid']}/{session['uid']}.pt")
         )
     session['cnn_path'] = os.path.join(os.getcwd(), f"users/{session['uid']}/{session['uid']}.pt")
