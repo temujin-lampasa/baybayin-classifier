@@ -53,7 +53,7 @@ class CNNForm(FlaskForm):
     fc_layer_on = MultiCheckboxField(label="On", choices=[(i, "On") for i in range(NUM_LAYERS)], coerce=int)
 
     optimizer = SelectField('Optimizer', choices=['SGD', 'Adam', 'Nadam', 'RMSProp'])
-    learning_rate = DecimalField('Dropout', places=2, widget=NumberInput(step=0.01))
+    learning_rate = DecimalField('Learning Rate', places=2, widget=NumberInput(step=0.01))
     beta1 = DecimalField('Beta 1', places=2, widget=NumberInput(step=0.01))
     beta2 = DecimalField('Beta 2', places=2, widget=NumberInput(step=0.01))
     batch_size = IntegerField('Batch Size')
