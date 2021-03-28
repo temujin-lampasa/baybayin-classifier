@@ -48,6 +48,7 @@
             </div>
             <input type="file" name="drawing" id="drawing">
             <input type="submit">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         </form>
     </div>
 
@@ -182,6 +183,7 @@
     </div>
     <form method="POST" action="{{ url_for('cnn') }}">
         <input type="submit" value="Show Feature Maps" class="form-submit">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     </form>
 </div>
 <script src="{{url_for('static', filename='index.js')}}"></script>

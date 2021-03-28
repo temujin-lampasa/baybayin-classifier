@@ -63,7 +63,10 @@ def about():
 def index():
     global FIRST_LAUNCH
     if FIRST_LAUNCH:
-        # Clear display variables and reset CNN path when launching for the first time
+        # Clear variables when launching for the first time
+        if session.get('cnn_params'):
+            del session['cnn_params']
+
         if session.get('classification'):
             del session['classification']
 
