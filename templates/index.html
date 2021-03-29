@@ -12,23 +12,23 @@
 
 <section class="drawing-section">
     <h2>Drawing Board</h2>
-    <div class="flex">
+    <div class="flex-wrap">
         <div class="drawing-canvas-background">
             <canvas id="drawing-canvas">
                 Unfortunately your browser does not support HTML canvas.
                 <script src="{{url_for('static', filename='drawing.js')}}"></script>
             </canvas>
         </div>
-        <div">
-            <div class="flex">
+        <div>
+            <div>
                 <label class="green-label">Prediction: </label>
                 <div class="yellow-textbox">A</div>
             </div>
-            <div class="flex">
+            <div>
                 <label class="green-label">Probability: </label>
                 <div class="yellow-textbox">0%</div>
             </div>
-            <div>
+            <div id="drawing-info">
                 <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
                 </p>
             </div>
@@ -39,17 +39,16 @@
     <button class="drawing-button">Clear</button>
     <button class="drawing-button">Submit</button>
 
-    <div>
+    <div class = "flex-wrap">
         {% if session.classification and session.probability%}
         <p>Prediction: {{ session.classification }}<br>
         Probability: {{ session.probability }}%</p>
         {% endif %}
         <form method="POST" action="classify" name="classify" enctype="multipart/form-data">
-
-            <label class="green-label">Classify Image</label>
+            <label class="green-label image-class">Classify Image</label>
 
             <input type="file" name="drawing" id="drawing">
-            <input type="submit">
+            <input type="submit" class="drawing-button image-class">
         </form>
     </div>
 
@@ -124,8 +123,17 @@
             {{render_fieldlist(cnn_form.activation, "fc", "single")}}
         </fieldset>
 
+    <input type='submit' value="Show CNN" class='form-submit'>
+    </form>
+</section>
+
+<section class="retrain-section">
 
     <h2>Retrain Model</h2>
+
+    <form method="POST" action="">
+
+        {{ retrain_form.csrf_token }}
 
         <div id='retrain-form-info'>
             <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.”</p>
@@ -133,26 +141,20 @@
 
         <div class= "flex">
             <fieldset class="form-group-container">
-                {{ render_field(cnn_form.optimizer) }}
-                {{ render_field(cnn_form.learning_rate) }}
-                {{ render_field(cnn_form.beta1) }}
-                {{ render_field(cnn_form.beta2) }}
-                {{ render_field(cnn_form.batch_size) }}
-                {{ render_field(cnn_form.epochs) }}
+                {{ render_field(retrain_form.optimizer) }}
+                {{ render_field(retrain_form.learning_rate) }}
+                {{ render_field(retrain_form.beta1) }}
+                {{ render_field(retrain_form.beta2) }}
+                {{ render_field(retrain_form.batch_size) }}
+                {{ render_field(retrain_form.epochs) }}
             </fieldset>
+
             <div id='instruction-div'>
             <h3>Instructions:</h3>
             <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.”</p>
             </div>
+
         </div>
-        {% if cnn_form.errors %}
-        ERRORS:
-        <ul>
-            {% for key, val in cnn_form.errors.items() %}
-                <li>{{key}} -- {{val}}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
 
         <div id='loading' style='display:none'>
             <center>
@@ -166,7 +168,6 @@
     </form>
 </section>
 
-
 <section>
     <h2>Show Feature Maps</h2>
     <div id='feature-maps'>
@@ -175,9 +176,10 @@
                 <img src='{{ filepath }}'>
             {% endfor %}
         {% endif %}
+        <table>
+        </table>
     </div>
     <form method="POST" action="{{ url_for('cnn') }}">
-        {{ fm_form.csrf_token }}
         <input type="submit" value="Show Feature Maps" class="form-submit">
     </form>
 </section>
