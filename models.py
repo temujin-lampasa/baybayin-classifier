@@ -32,7 +32,7 @@ DEFAULT_CNN_PARAMS = {
 DEFAULT_TRAIN_PARAMS = {
     'epochs' : 2,
     'batch_size' : 4,
-    'optimizer_class' : 'SGD',
+    'optimizer' : 'SGD',
     'learning_rate' : 0.001,
     'momentum' : 0.9,
     'beta1': 0,
@@ -53,8 +53,8 @@ ALTERNATE_CNN_PARAMS = {
                         'padding' : 'valid'}
                     ],
 'fc_layer_configs' : [
-                        {'size' : 128},
-                        {'size' : 64},
+                        {'output_size' : 128},
+                        {'output_size' : 64},
                     ],
 'batch_norm' : False,
 'dropout' : 0.5,
@@ -135,8 +135,8 @@ class baybayin_net(nn.Module):
         for i, fc_layer_config in enumerate(args['fc_layer_configs']):
             self.fc_layers.append(
                 nn.Linear(
-                    dim[0]*dim[1]*args['conv_layer_configs'][-1]['filters'] if i==0 else args['fc_layer_configs'][i-1]['size'],
-                    fc_layer_config['size']
+                    dim[0]*dim[1]*args['conv_layer_configs'][-1]['filters'] if i==0 else args['fc_layer_configs'][i-1]['output_size'],
+                    fc_layer_config['output_size']
                 )
             )
             # self.fc_layers.append(activation_fn)
@@ -145,7 +145,7 @@ class baybayin_net(nn.Module):
             )
             self.fc_layers.append(nn.Dropout(args['dropout']))
         self.fc_layers.append(
-            nn.Linear(args['fc_layer_configs'][-1]['size'], 19)
+            nn.Linear(args['fc_layer_configs'][-1]['output_size'], 19)
             )
         self.fc_layers = nn.ModuleList(self.fc_layers)
   
@@ -245,9 +245,9 @@ def train_model(cnn_args, train_args, save_path):
     baybayin_trainloader, baybayin_testloader = create_loaders(train_args['batch_size'])
 
     # initialize optimizer
-    if train_args['optimizer_class'] == 'SGD':
+    if train_args['optimizer'] == 'SGD':
         optimizer = optim.SGD(model.parameters(), lr=train_args['learning_rate'], momentum=train_args['momentum'])
-    elif train_args['optimizer_class'] == 'Adam':
+    elif train_args['optimizer'] == 'Adam':
         optimizer = optim.Adam(model.parameters(), lr=train_args['learning_rate'], betas=train_args['betas'])
 
     criterion = nn.CrossEntropyLoss() # initialize loss

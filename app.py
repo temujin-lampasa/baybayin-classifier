@@ -95,6 +95,7 @@ def index():
         formdata = cnn_form.data
         formdata.pop('csrf_token')
         session['cnn_formdata'] = json.dumps(formdata, use_decimal=True)
+        print("FORMDATA")
         for k, v in formdata.items():
             print(k, v)
 
@@ -145,12 +146,16 @@ def train():
     # training forms are single values. 
     # Conv/FC Layer forms are lists of length NUM_LAYERS
     xy_forms = ['kernel', 'stride', 'pool_size']
-    fc_forms = ['size']
+    fc_forms = ['output_size']
     conv_forms = ['filters', 'kernel', 'stride', 'conv_layer_on', 'pool_size', 'padding']
     train_forms = ['optimizer', 'learning_rate', 'beta1', 'beta2', 'batch_size', 'epochs']
 
 
-    CNN_params = {}
+    CNN_params = {
+    'batch_norm' : False,
+    'dropout' : 0.5,
+    'activation_fn' : 'ReLU'
+    }
 
     conv_config_template = {
         'filters': 0,
@@ -161,7 +166,7 @@ def train():
     }
 
     fc_config_template = {
-        'size': 0,
+        'output_size': 0,
         'dropout': 0
     }
     
@@ -169,8 +174,13 @@ def train():
     CNN_params['fc_layer_configs'] =  [fc_config_template for _ in range(NUM_LAYERS)]
 
     TRAIN_params = {
-        'epochs': cnn_formdata['epochs'],
-        'batch_size': cnn_formdata['batch_size'],
+        'epochs': 2,
+        'batch_size': 4,
+        'optimizer': 'SGD',
+        'learning_rate': 0.001,
+        'momentum': 0.9,
+        'beta1': 0,
+        'beta2': 0,
     }
 
     for layer_idx in range(NUM_LAYERS):
@@ -186,17 +196,17 @@ def train():
             
             # FC config
             if field in fc_config_template:
-                pass
+                res = value[layer_idx]
+                CNN_params['fc_layer_configs'][layer_idx][field] = res
 
             # Train params
             if field in train_forms:
-                pass
-    
+                TRAIN_params[field] = value
 
     # retrain mode with alternate hyperparameters
     train_model(
-        ALTERNATE_CNN_PARAMS,
-        DEFAULT_TRAIN_PARAMS,
+        CNN_params,
+        TRAIN_params,
         os.path.join(os.getcwd(), f"users/{session['uid']}/{session['uid']}.pt")
         )
     session['cnn_path'] = os.path.join(os.getcwd(), f"users/{session['uid']}/{session['uid']}.pt")
