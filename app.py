@@ -42,17 +42,18 @@ def index():
     global FIRST_LAUNCH
     if FIRST_LAUNCH:
         # Clear variables when launching for the first time
-        if session.get('cnn_params'):
-            del session['cnn_params']
-
-        if session.get('classification'):
-            del session['classification']
-
-        if session.get('probability'):
-            del session['probability']
-
-        if session.get('feature_maps'):
-            del session['feature_maps']
+        session.clear()
+        # if session.get('cnn_params'):
+            # del session['cnn_params']
+# 
+        # if session.get('classification'):
+            # del session['classification']
+# 
+        # if session.get('probability'):
+            # del session['probability']
+# 
+        # if session.get('feature_maps'):
+            # del session['feature_maps']
 
         session['cnn_path'] = os.path.join(os.getcwd(), 'default.pt')
 
