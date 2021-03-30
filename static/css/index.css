@@ -14,7 +14,6 @@ label, .green-label {
   margin-right: 10px;
   background: #1E3C3F;
   padding:10px;
-  margin-right: 10px;
 }
 
 input, button, select {
@@ -69,10 +68,15 @@ select {
 /*Drawing Board Section*/
 .drawing-canvas-background{
   background-color: #1E3C3F;
-  width: 24vw;
+  width: 10vw;
   height: 24vh;
   padding: 20px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  min-width: fit-content;
+  min-height:fit-content;
 }
+
 
 #drawing-canvas{
   background-color: #C4C4C4;
@@ -80,10 +84,20 @@ select {
   height:100%;
 }
 
+#drawing-info{
+  min-width: 310px;
+  width:24vw;
+}
+
+#drawing{
+    min-width:fit-content;
+}
+
 .yellow-textbox{
   background: #E1A46D;
   padding:10px;
   margin-left: 10px;
+  margin-bottom: 10px;
   font-size: 24px;
   font-weight: bold;
   display: inline-block;
@@ -92,14 +106,17 @@ select {
 .drawing-button{
   margin-top: 10px;
   margin-right: 10px;
+  margin-bottom: 10px;
   background: #1E3C3F;
   color: #fff;
   font-size: 24px;
   font-family: 'Mulish', sans-serif;
+  min-width: fit-content;
+  padding-right: 8px;
 }
 
 input#drawing {
-  width: fit-content;
+  padding: 8px 0 0 8px;
 }
 
 /*CNN Section*/
