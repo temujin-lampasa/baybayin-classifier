@@ -216,7 +216,7 @@ def train():
 
 @app.route('/cnn', methods=['POST', 'GET'])
 def cnn():
-    # run CNN here
+    # display feature maps here
 
     # use the current CNN
     print(session['cnn_path'])

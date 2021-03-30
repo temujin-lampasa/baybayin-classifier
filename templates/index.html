@@ -48,12 +48,8 @@
             <label class="green-label image-class">Classify Image</label>
 
             <input type="file" name="drawing" id="drawing">
-<<<<<<< HEAD
-            <input type="submit">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-=======
             <input type="submit" class="drawing-button image-class">
->>>>>>> 726b51bab9be231533aa8111ea4499ae43af3f2c
         </form>
     </div>
 
@@ -128,7 +124,20 @@
             {{render_fieldlist(cnn_form.activation, "fc", "single")}}
         </fieldset>
 
-    <input type='submit' value="Show CNN" class='form-submit'>
+    <!-- <input type='submit' value="Show CNN" class='form-submit'> -->
+    </form>
+    <div id='feature-maps'>
+        {% if session.get('feature_maps') %}
+            {% for filepath in session.get('feature_maps') %}
+                <img src='{{ filepath }}'>
+            {% endfor %}
+        {% endif %}
+        <table>
+        </table>
+    </div>
+    <form method="POST" action="{{ url_for('cnn') }}">
+        <input type="submit" value="Show CNN" class="form-submit">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     </form>
 </section>
 
@@ -138,7 +147,7 @@
 
     <form method="POST" action="">
 
-        {{ retrain_form.csrf_token }}
+        {{ cnn_form.csrf_token }}
 
         <div id='retrain-form-info'>
             <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.”</p>
@@ -146,12 +155,12 @@
 
         <div class= "flex">
             <fieldset class="form-group-container">
-                {{ render_field(retrain_form.optimizer) }}
-                {{ render_field(retrain_form.learning_rate) }}
-                {{ render_field(retrain_form.beta1) }}
-                {{ render_field(retrain_form.beta2) }}
-                {{ render_field(retrain_form.batch_size) }}
-                {{ render_field(retrain_form.epochs) }}
+                {{ render_field(cnn_form.optimizer) }}
+                {{ render_field(cnn_form.learning_rate) }}
+                {{ render_field(cnn_form.beta1) }}
+                {{ render_field(cnn_form.beta2) }}
+                {{ render_field(cnn_form.batch_size) }}
+                {{ render_field(cnn_form.epochs) }}
             </fieldset>
 
             <div id='instruction-div'>
@@ -175,19 +184,6 @@
 
 <section>
     <h2>Show Feature Maps</h2>
-    <div id='feature-maps'>
-        {% if session.get('feature_maps') %}
-            {% for filepath in session.get('feature_maps') %}
-                <img src='{{ filepath }}'>
-            {% endfor %}
-        {% endif %}
-        <table>
-        </table>
-    </div>
-    <form method="POST" action="{{ url_for('cnn') }}">
-        <input type="submit" value="Show Feature Maps" class="form-submit">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-    </form>
 </section>
 
 <script src="{{url_for('static', filename='index.js')}}"></script>
