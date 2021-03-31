@@ -1,3 +1,7 @@
+# CNN impementation based on : https://pytorch.org/tutorials/beginner/blitz/cifar10_tutorial.html
+# Date: 4/1/2021
+# Name of Author/Programmer: Soumith Chintala
+
 import io
 from math import floor, ceil
 import os
@@ -62,18 +66,18 @@ ALTERNATE_CNN_PARAMS = {
 }
 
 def same_pad_values(dim, kernel_size, stride=(1, 1)):
-    total_h_pad = stride['x']*dim[0]-dim[0]+kernel_size['x']-stride['x']
+    total_h_pad = stride[0]*dim[0]-dim[0]+kernel_size[0]-stride[0]
     smaller_h_pad = floor(total_h_pad / 2)
     larger_h_pad = ceil(total_h_pad / 2)
-    total_v_pad = stride['y']*dim[1]-dim[1]+kernel_size['y']-stride['y']
+    total_v_pad = stride[1]*dim[1]-dim[1]+kernel_size[1]-stride[1]
     smaller_v_pad = floor(total_v_pad / 2)
     larger_v_pad = ceil(total_v_pad / 2)
     return (smaller_h_pad, larger_h_pad, smaller_v_pad, larger_v_pad)
 
 
-def find_new_dim(dim, kernel_size, stride={'x':1, 'y':1}, pad=(0, 0, 0, 0)):
-    return (floor((dim[0]+sum(pad[:2])-(kernel_size['x']-1)-1)/stride['x']+1),
-          floor((dim[1]+sum(pad[2:])-(kernel_size['y']-1)-1)/stride['y']+1))
+def find_new_dim(dim, kernel_size, stride=(1, 1), pad=(0, 0, 0, 0)):
+    return (floor((dim[0]+sum(pad[:2])-(kernel_size[0]-1)-1)/stride[0]+1),
+          floor((dim[1]+sum(pad[2:])-(kernel_size[1]-1)-1)/stride[1]+1))
 
 def get_activation_function(activation_function_string):
     if activation_function_string == 'Sigmoid':
@@ -112,8 +116,8 @@ class baybayin_net(nn.Module):
                 nn.Conv2d(
                   in_channels=(3 if i==0 else args['conv_layer_configs'][i-1]['filters']),
                   out_channels=conv_layer['filters'],
-                  kernel_size=tuple(conv_layer['kernel'].values()),
-                  stride=tuple(conv_layer['stride'].values())
+                  kernel_size=conv_layer['kernel'],
+                  stride=conv_layer['stride']
                 )
             )
 
@@ -125,8 +129,8 @@ class baybayin_net(nn.Module):
             if args['batch_norm']:
                 self.conv_layers.append(nn.BatchNorm2d(conv_layer['filters']))
       
-            self.conv_layers.append(nn.MaxPool2d(kernel_size=tuple(conv_layer['pool_size'].values())))
-            dim = find_new_dim(dim, conv_layer['pool_size'], {'x':2, 'y':2})
+            self.conv_layers.append(nn.MaxPool2d(kernel_size=conv_layer['pool_size']))
+            dim = find_new_dim(dim, conv_layer['pool_size'], (2, 2))
     
         self.conv_layers = nn.ModuleList(self.conv_layers)
         
