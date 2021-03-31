@@ -162,13 +162,19 @@
                 {{ render_field(cnn_form.batch_size) }}
                 {{ render_field(cnn_form.epochs) }}
             </fieldset>
-
             <div id='instruction-div'>
             <h3>Instructions:</h3>
             <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.”</p>
             </div>
-
         </div>
+        {% if cnn_form.errors %}
+        ERRORS:
+        <ul>
+            {% for key, val in cnn_form.errors.items() %}
+                <li>{{key}} -- {{val}}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
 
         <div id='loading' style='display:none'>
             <center>
@@ -181,6 +187,7 @@
 
     </form>
 </section>
+
 
 <script src="{{url_for('static', filename='index.js')}}"></script>
 {% endblock %}

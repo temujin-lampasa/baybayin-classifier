@@ -174,8 +174,8 @@ def train():
         'dropout': 0
     }
     
-    CNN_params['conv_layer_configs'] = [conv_config_template for _ in range(NUM_LAYERS)]
-    CNN_params['fc_layer_configs'] =  [fc_config_template for _ in range(NUM_LAYERS)]
+    CNN_params['conv_layer_configs'] = [conv_config_template.copy() for _ in range(NUM_LAYERS)]
+    CNN_params['fc_layer_configs'] =  [fc_config_template.copy() for _ in range(NUM_LAYERS)]
 
     TRAIN_params = {
         'epochs': 2,
