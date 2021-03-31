@@ -4,6 +4,7 @@ from torchvision import transforms
 from datetime import datetime
 import os
 from pathlib import Path
+from pprint import PrettyPrinter
 import shutil
 
 import simplejson as json
@@ -142,6 +143,8 @@ def train():
     # session['cnn_formdata'] --> CNN_PARAMS, TRAIN_PARAMS
 
     cnn_formdata = json.loads(session['cnn_formdata'])
+    pp = PrettyPrinter()
+    pp.pprint(cnn_formdata)
 
     # Note: 
     # training forms are single values. 
@@ -203,14 +206,20 @@ def train():
             # Train params
             if field in train_forms:
                 TRAIN_params[field] = value
+                
+    pp.pprint(CNN_params)
+    pp.pprint(TRAIN_params)
 
-    # retrain mode with alternate hyperparameters
-    train_model(
-        CNN_params,
-        TRAIN_params,
-        os.path.join(os.getcwd(), f"users/{session['uid']}/{session['uid']}.pt")
-        )
-    session['cnn_path'] = os.path.join(os.getcwd(), f"users/{session['uid']}/{session['uid']}.pt")
+    import dill
+    with open(os.path.join(app.root_path, 'test_params.pickle'), 'wb') as file:
+        dill.dump(CNN_params, file)
+        
+    # train_model(
+    #     CNN_params,
+    #     TRAIN_params,
+    #     os.path.join(os.getcwd(), f"users/{session['uid']}/{session['uid']}.pt")
+    #     )
+    # session['cnn_path'] = os.path.join(os.getcwd(), f"users/{session['uid']}/{session['uid']}.pt")
     return redirect('/')
 
 

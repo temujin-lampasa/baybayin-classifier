@@ -145,7 +145,7 @@
 
     <h2>Retrain Model</h2>
 
-    <form method="POST" action="">
+    <form method="POST" action="{{ url_for('train' )}}">
 
         {{ cnn_form.csrf_token }}
 
@@ -177,13 +177,9 @@
             </center>
         </div>
 
-        <input type='submit' value="Train Model"  action ='train' class="form-submit" onclick='document.getElementById("loading").style.display="block"'>
+        <input type='submit' value="Train Model"  action ="{{ url_for('train') }}" class="form-submit" onclick='document.getElementById("loading").style.display="block"'>
 
     </form>
-</section>
-
-<section>
-    <h2>Show Feature Maps</h2>
 </section>
 
 <script src="{{url_for('static', filename='index.js')}}"></script>
