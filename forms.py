@@ -20,7 +20,7 @@ class BaseForm(FlaskForm):
 
 class XY_Form(BaseForm):
     x = IntegerField('x', validators=[InputRequired(), NumberRange(min=0, max=10)])
-    y = IntegerField('y', validators=[InputRequired(), NumberRange(min=0, max=10, message="error")])
+    y = IntegerField('y', validators=[InputRequired(), NumberRange(min=0, max=10)])
 
 
 class MultiCheckboxField(SelectMultipleField):
