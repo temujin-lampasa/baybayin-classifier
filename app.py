@@ -91,23 +91,26 @@ def index():
 
     # CNN Layers & Training Form
     cnn_form = CNNForm(data=session['cnn_formdata'])
+    # Show Feature Maps
+    feature_maps_form = FeatureMapsForm()
+
+    formdata = cnn_form.data
 
     if cnn_form.validate_on_submit():
         print("CNN Form validated.")
-        formdata = cnn_form.data
         formdata.pop('csrf_token')
         session['cnn_formdata'] = json.dumps(formdata, use_decimal=True)
-        print("FORMDATA")
-        for k, v in formdata.items():
-            print(k, v)
-
         return redirect('/train')
-    else:
-        print("CNN Form validation failed")
-        session['cnn_formdata'] = json.dumps(cnn_form.data, use_decimal=True)
 
-    # Show Feature Maps
-    feature_maps_form = FeatureMapsForm()
+    else:
+        formdata.pop('csrf_token')
+        print("CNN Form validation failed")
+        session['cnn_formdata'] = json.dumps(formdata, use_decimal=True)
+        return render_template("index.html",
+                           cnn_form=cnn_form,
+                           fm_form=feature_maps_form)
+
+    
 
     if feature_maps_form.validate_on_submit():
         return redirect('/cnn')
