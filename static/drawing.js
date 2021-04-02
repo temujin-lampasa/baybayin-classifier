@@ -36,3 +36,11 @@ drawingCanvas.addEventListener('mousemove', e =>{
         x = e.offsetX;
         y = e.offsetY;
 })
+
+// Saving canvas image
+const submitButton = document.querySelectorAll(".drawing-section .drawing-button")[1]
+submitButton.onclick = function() {
+    img_base64 = drawingCanvas.toDataURL();
+    // TODO: make POST request to save_img with img_base64 and csrf_token
+    // fetch("/save_img")
+}
