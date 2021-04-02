@@ -13,6 +13,11 @@ from models import DEFAULT_CNN_PARAMS, DEFAULT_TRAIN_PARAMS, ALTERNATE_CNN_PARAM
 from forms import CNNForm, FeatureMapsForm, NUM_LAYERS
 from flask_wtf.csrf import CSRFProtect
 
+# For converting canvas drawing to image
+from PIL import Image
+import base64
+from io import BytesIO
+
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -267,6 +272,16 @@ def classify():
         if session.get("probability"):
             del session["probability"]
     return redirect('/')
+
+
+# Adapted from: https://stackoverflow.com/questions/41957490/send-canvas-image-data-uint8clampedarray-to-flask-server-via-ajax
+@app.route('/save_img', methods=['POST'])
+def get_image():
+    image_b64 = request.values['imageBase64'].split()[1]
+    image_PIL = Image.open(BytesIO(base64.b64decode(image_b64)))
+    # image_np = np.array(image_PIL)
+    image_PIL.save("test.png")
+    return redirect("/")
 
 # def get_feature_maps(args):
     # print("Getting feature maps...")
