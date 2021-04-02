@@ -49,18 +49,6 @@ def index():
     if FIRST_LAUNCH:
         # Clear variables when launching for the first time
         session.clear()
-        # if session.get('cnn_params'):
-            # del session['cnn_params']
-# 
-        # if session.get('classification'):
-            # del session['classification']
-# 
-        # if session.get('probability'):
-            # del session['probability']
-# 
-        # if session.get('feature_maps'):
-            # del session['feature_maps']
-
         session['cnn_path'] = os.path.join(os.getcwd(), 'default.pt')
 
         # Create folder for feature maps when launching for the first time
@@ -282,16 +270,6 @@ def get_image():
     # image_np = np.array(image_PIL)
     image_PIL.save("test.png")
     return redirect("/")
-
-# def get_feature_maps(args):
-    # print("Getting feature maps...")
-    # print(args)
-    # print(session['cnn_path'])
-    # generate_feature_maps(None, session['cnn_path'])
-
-# def train_model(args):
-#     print("Training...")
-#     print(args)
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=8080, debug=True)
