@@ -37,12 +37,26 @@ drawingCanvas.addEventListener('mousemove', e =>{
         y = e.offsetY;
 })
 
+
+const drawing_pred = document.getElementById("drawing-pred");
+const drawing_proba = document.getElementById("drawing-proba");
+
 // Saving canvas image
 const submitButton = document.querySelectorAll(".drawing-section .drawing-button")[1]
 submitButton.onclick = function() {
     img_base64 = drawingCanvas.toDataURL();
     console.log("Saving image...")
-    $.post( "/classify_drawing", {
-        image : img_base64,
+    data = {
+        "image": img_base64
+    };
+    $.ajax( "/classify_drawing", {
+        type: 'POST',
+        data: JSON.stringify(data),
+        contentType: 'application/json;charset=UTF-8',
+        success: function(response) {
+            response = JSON.parse(response);
+            drawing_pred.innerHTML = response['class'];
+            drawing_proba.innerHTML = response['proba'] + '%';
+        }
     });
 }

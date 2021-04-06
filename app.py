@@ -295,9 +295,11 @@ def classify():
 @app.route('/classify_drawing', methods=['GET', 'POST'])
 def classify_drawing():
     drawing_path = f"users/{session['uid']}/drawing.jpg"
+    if os.path.exists(drawing_path):
+        os.remove(drawing_path)
     print(f"Saving drawing to {drawing_path}")
 
-    image_b64 = request.form['image'].split(",")[1]
+    image_b64 = request.json['image'].split(",")[1]
     image_PIL = Image.open(BytesIO(base64.b64decode(image_b64)))
     image_PIL.load()
 
@@ -307,9 +309,12 @@ def classify_drawing():
     
     with open (drawing_path, 'rb') as d:
         classification, probability = classify_uploaded_file(d, session['cnn_path'])
-        session['drawing_classification'] = classification
-        session['drawing_probability'] = f'{probability*100:.2f}'
-    return redirect("/")
+        # session['drawing_classification'] = classification
+        # session['drawing_probability'] = f'{probability*100:.2f}'
+    
+    response = json.dumps({'status': 'OK', 'class': classification, 'proba': f'{probability*100:.2f}'})
+    return response
+    
 
 @app.route('/generate', methods=['POST'])
 def generate():
