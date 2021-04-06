@@ -290,21 +290,25 @@ def classify():
 
 
 # Adapted from: https://stackoverflow.com/questions/41957490/send-canvas-image-data-uint8clampedarray-to-flask-server-via-ajax
+# and https://stackoverflow.com/questions/9166400/convert-rgba-png-to-rgb-with-pil
 @csrf.exempt
 @app.route('/classify_drawing', methods=['GET', 'POST'])
 def classify_drawing():
-    print("RQST"*10)
-    print(request.form)
-    image_b64 = request.form['image'].split(",")[1]
-    image_PIL = Image.open(BytesIO(base64.b64decode(image_b64)))
-    image_PIL = image_PIL.convert("RGB")
     drawing_path = f"users/{session['uid']}/drawing.jpg"
     print(f"Saving drawing to {drawing_path}")
-    image_PIL.save(drawing_path)
+
+    image_b64 = request.form['image'].split(",")[1]
+    image_PIL = Image.open(BytesIO(base64.b64decode(image_b64)))
+    image_PIL.load()
+
+    background = Image.new("RGB", image_PIL.size, (255, 255, 255))
+    background.paste(image_PIL, mask=image_PIL.split()[3])
+    background.save(drawing_path, 'JPEG', quality=80)
+    
     with open (drawing_path, 'rb') as d:
         classification, probability = classify_uploaded_file(d, session['cnn_path'])
-        session['classification'] = classification
-        session['probability'] = f'{probability*100:.2f}'
+        session['drawing_classification'] = classification
+        session['drawing_probability'] = f'{probability*100:.2f}'
     return redirect("/")
 
 @app.route('/generate', methods=['POST'])
