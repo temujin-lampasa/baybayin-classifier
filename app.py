@@ -8,9 +8,9 @@ from pprint import PrettyPrinter
 import shutil
 
 import simplejson as json
-from models import DEFAULT_CNN_PARAMS, DEFAULT_TRAIN_PARAMS, ALTERNATE_CNN_PARAMS, classify_uploaded_file, train_model, generate_feature_maps
+from models import DEFAULT_CNN_PARAMS, DEFAULT_TRAIN_PARAMS, ALTERNATE_CNN_PARAMS, classify_uploaded_file, train_model, generate_feature_maps, generate_character
 
-from forms import CNNForm, FeatureMapsForm, NUM_LAYERS
+from forms import CNNForm, FeatureMapsForm, GANForm, NUM_LAYERS
 from flask_wtf.csrf import CSRFProtect
 
 # For converting canvas drawing to image
@@ -55,15 +55,38 @@ def index():
         session['feature_maps_path'] = 'static/feature_maps/0'
         if not os.path.exists('static/feature_maps/0'):
             Path('static/feature_maps/0').mkdir(parents=True, exist_ok=True)
-            session['feature_maps_path'] = 'static/feature_maps/0'
-    
+            # session['feature_maps_path'] = 'static/feature_maps/0'
+
         if not session.get('feature_maps'):
             session['feature_maps'] = os.listdir(session['feature_maps_path'])
+
+        # There should be no gan image when first launching
+        session['gan_image'] = None
+
         FIRST_LAUNCH = False
+    
+    if not session.get('uid'):
+        new_user = User()
+        db.session.add(new_user)
+        db.session.commit()
+        session['uid'] = new_user.id
+
+    # temporary workaround to user folder
+    if not os.path.exists(os.path.join(os.getcwd(), 'users')):
+        os.mkdir(os.path.join(os.getcwd(), 'users'))
+
+    if not os.path.exists(os.path.join(os.getcwd(), f"users/{session['uid']}")):
+        os.mkdir(os.path.join(os.getcwd(), f"users/{session['uid']}"))
+
+    session['gan_images_path'] = f"static/gan/{session['uid']}"
+    
+    if not os.path.exists(session['gan_images_path']):
+        Path(f"static/gan/{session['uid']}").mkdir(parents=True, exist_ok=True)
 
     if not session.get('train_params'):
         session['train_params'] = DEFAULT_TRAIN_PARAMS
     
+
     if not session.get('cnn_formdata'):
         layer_params = {k: [v for _ in range(NUM_LAYERS)]  for k, v in DEFAULT_CNN_PARAMS.items()}
         train_params= session['train_params']
@@ -79,15 +102,21 @@ def index():
     else:
         session['cnn_formdata'] = json.loads(session['cnn_formdata'])
 
-
+    if not session.get('gan_formdata'):
+        session['gan_formdata'] = {}
+    else:
+        session['gan_formdata'] = json.loads(session['gan_formdata'])
     # Forms ---------------
 
     # CNN Layers & Training Form
     cnn_form = CNNForm(data=session['cnn_formdata'])
     # Show Feature Maps
     feature_maps_form = FeatureMapsForm()
+    # GAN Form
+    gan_form = GANForm()
 
     formdata = cnn_form.data
+    ganformdata = gan_form.data
 
     if cnn_form.validate_on_submit():
         print("CNN Form validated.")
@@ -101,30 +130,27 @@ def index():
         session['cnn_formdata'] = json.dumps(formdata, use_decimal=True)
         return render_template("index.html",
                            cnn_form=cnn_form,
-                           fm_form=feature_maps_form)
-
-    
+                           fm_form=feature_maps_form,
+                           gan_form=gan_form)
 
     if feature_maps_form.validate_on_submit():
         return redirect('/cnn')
+
+    if gan_form.valudate_on_submit():
+        print("GAN Form validated.")
+        return redirect('/generate')
+    else:
+        print("GAN Form validation failed")
+        return render_template("index.html",
+                           cnn_form=cnn_form,
+                           fm_form=feature_maps_form,
+                           gan_form=gan_form)
     # ---------------------
-
-    if not session.get('uid'):
-        new_user = User()
-        db.session.add(new_user)
-        db.session.commit()
-        session['uid'] = new_user.id
-
-    # temporary workaround to user folder
-    if not os.path.exists(os.path.join(os.getcwd(), 'users')):
-        os.mkdir(os.path.join(os.getcwd(), 'users'))
-
-    if not os.path.exists(os.path.join(os.getcwd(), f"users/{session['uid']}")):
-        os.mkdir(os.path.join(os.getcwd(), f"users/{session['uid']}"))
 
     return render_template("index.html",
                            cnn_form=cnn_form,
-                           fm_form=feature_maps_form)
+                           fm_form=feature_maps_form,
+                           gan_form=gan_form)
 
 
 @app.route('/train', methods=['GET', 'POST'])
@@ -270,6 +296,24 @@ def get_image():
     # image_np = np.array(image_PIL)
     image_PIL.save("test.png")
     return redirect("/")
+
+@app.route('/generate', methods=['POST'])
+def generate():
+
+    # create new image to avoid caching issues
+    if os.listdir(session['gan_images_path']):
+        latest_image = sorted(os.listdir(session['gan_images_path']))[-1]
+        new_image = f'{int(os.path.splitext(latest_image)[0])+1}.png'
+    else:
+        new_image = '0.png'
+    
+    session['gan_character'] = request.form['character']
+    session['gan_image'] = os.path.join(session['gan_images_path'], new_image)
+    generate_character(session['gan_character'], session['gan_image'])
+
+    print(session['gan_image'])
+
+    return redirect('/')
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=8080, debug=True)

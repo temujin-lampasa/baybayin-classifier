@@ -11,6 +11,8 @@ from wtforms import (
     BooleanField
 )
 
+from models import classes
+
 NUM_LAYERS = 4
 
 class BaseForm(FlaskForm):
@@ -62,3 +64,6 @@ class CNNForm(FlaskForm):
 
 class FeatureMapsForm(FlaskForm):
     h = HiddenField()
+
+class GANForm(FlaskForm):
+    character = SelectField('Baybayin Character', choices=classes)

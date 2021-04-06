@@ -2,6 +2,10 @@
 # Date: 4/1/2021
 # Name of Author/Programmer: Soumith Chintala
 
+# GAN implementation based on: https://github.com/znxlwm/pytorch-generative-model-collections
+# Date: 4/5/2021
+# znxlwm
+
 import io
 from math import floor, ceil
 import os
@@ -385,3 +389,56 @@ def generate_feature_maps(save_path, load_path):
                 )
             )
     return sorted(os.listdir(save_path))
+
+
+class baybayin_generator(nn.Module):
+    def __init__(self, input_dim=62, output_dim=3, input_size=32, class_num=19):
+        super(baybayin_generator, self).__init__()
+        self.input_dim = input_dim
+        self.output_dim = output_dim
+        self.input_size = input_size
+        self.class_num = class_num
+
+        self.fc = nn.Sequential(
+            nn.Linear(self.input_dim + self.class_num, 1024),
+            nn.BatchNorm1d(1024),
+            nn.ReLU(),
+            nn.Linear(1024, 128 * (self.input_size // 4) * (self.input_size // 4)),
+            nn.BatchNorm1d(128 * (self.input_size // 4) * (self.input_size // 4)),
+            nn.ReLU(),
+        )
+        self.deconv = nn.Sequential(
+            nn.ConvTranspose2d(128, 64, 4, 2, 1),
+            nn.BatchNorm2d(64),
+            nn.ReLU(),
+            nn.ConvTranspose2d(64, self.output_dim, 4, 2, 1),
+            nn.Tanh(),
+        )
+
+    def forward(self, input, label):
+        x = torch.cat([input, label], 1)
+        x = self.fc(x)
+        x = x.view(-1, 128, (self.input_size // 4), (self.input_size // 4))
+        x = self.deconv(x)
+
+        return x
+
+
+def generate_character(character, save_path):
+    print(character)
+    if character.lower() in classes:
+        character_index = classes.index(character.lower())
+        model = baybayin_generator()
+        model.load_state_dict(
+            torch.load('cgan.pkl', map_location=torch.device('cpu'))
+        )
+        print(model)
+        model.eval()
+        noise = torch.rand((2, 62))
+        labels = torch.Tensor([[1 if baybayin_class==character.lower() else 0 for baybayin_class in classes]]*2)
+        output = model(
+            noise,
+            labels
+        )
+        output = (np.transpose(output.detach().numpy()[0], (1, 2, 0))*127.5+127.5).astype(np.uint8)
+        Image.fromarray(output).save(save_path)
