@@ -24,7 +24,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = '\xd7\x15\xf4\x13k{\xb7b\xfe;D\n\xf3fa7\x9a\x0e\x87q\x0e\x1d\xabV'
 
-CSRFProtect(app)
+csrf = CSRFProtect()
+csrf.init_app(app)
 
 db = SQLAlchemy(app)
 
@@ -269,7 +270,7 @@ def cnn():
     session['feature_maps'] = [os.path.join(session['feature_maps_path'], filepath) for filepath in session['feature_maps']]
     return redirect('/')
 
-
+@csrf.exempt
 @app.route('/classify', methods=['POST'])
 def classify():
     print(session['cnn_path'])
@@ -289,12 +290,13 @@ def classify():
 
 
 # Adapted from: https://stackoverflow.com/questions/41957490/send-canvas-image-data-uint8clampedarray-to-flask-server-via-ajax
-@app.route('/save_img', methods=['POST'])
+@app.route('/classify_drawing', methods=['GET', 'POST'])
 def get_image():
-    image_b64 = request.values['imageBase64'].split()[1]
+    image_b64 = request.form['image'].split(",")[1]
     image_PIL = Image.open(BytesIO(base64.b64decode(image_b64)))
-    # image_np = np.array(image_PIL)
-    image_PIL.save("test.png")
+    session['drawing_path'] = f"users/{session['uid']}/drawing.png"
+    print(f"Saving drawing to {drawing_path}")
+    image_PIL.save(drawing_path)
     return redirect("/")
 
 @app.route('/generate', methods=['POST'])
