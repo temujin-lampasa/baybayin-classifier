@@ -42,7 +42,7 @@ const submitButton = document.querySelectorAll(".drawing-section .drawing-button
 submitButton.onclick = function() {
     img_base64 = drawingCanvas.toDataURL();
     console.log("Saving image...")
-    $.post( "/save_img", {
+    $.post( "/classify_drawing", {
         image : img_base64,
     });
 }
