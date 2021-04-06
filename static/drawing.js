@@ -11,7 +11,7 @@ let y = 0;
 function draw(context, x1, y1, x2, y2){
     context.beginPath();
     context.strokeStyle = 'black';
-    context.lineWidth = '2';
+    context.lineWidth = '5';
     context.moveTo(x1, y1);
     context.lineTo(x2, y2);
     context.stroke();
